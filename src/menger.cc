@@ -51,6 +51,14 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	 * function CreateMenger to append all vertices and triangles 
 	 * associated with that subcube. 
 	 */
+
+	 // Bounds of cube is -0.5 to 0.5
+
+	 // Determine bound of cube
+	 // calculate subcubes
+	 // determine which subcubes should be drawn
+	 // ifShouldBeDrawn, call CreateMenger on that subcube
+
 }
 
 /** TODO: 20 points
@@ -67,7 +75,21 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
  * when rendered, because they are "inside out." 
  * 
  */
- void Createmenger();
+ void CreateMenger(std::vector<glm::vec4>&  obj_vertices, 
+	              std::vector<glm::uvec3>& obj_faces) const 
+ {
+
+ }
+
+/**
+ * Create a square, made of two triangles, to put into vertices
+ * and faces
+ *
+ */
+void CreateSquare(std::vector<glm::vec4>&  obj_vertices, 
+	              std::vector<glm::uvec3>& obj_faces) const 
+{
+}
 
  /** TODO: 5 points
   * Modify the keyboard callback so that pressing any key from '0' to '4'
