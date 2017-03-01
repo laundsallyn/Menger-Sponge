@@ -95,8 +95,10 @@ CreateTriangle(std::vector<glm::vec4>& vertices,
 {
 	vertices.push_back(glm::vec4(-0.5f, -0.5f, -0.5f, 1.0f));
 	vertices.push_back(glm::vec4(0.5f, -0.5f, -0.5f, 1.0f));
-	vertices.push_back(glm::vec4(0.0f, 0.5f, -0.5f, 1.0f));
+	vertices.push_back(glm::vec4(-0.5f, 0.5f, -0.5f, 1.0f));
+	vertices.push_back(glm::vec4(0.5f, 0.5f, -0.5f, 1.0f));
 	indices.push_back(glm::uvec3(0, 1, 2));
+	indices.push_back(glm::uvec3(1, 2, 3));
 }
 
 // FIXME: Save geometry to OBJ file
@@ -369,7 +371,7 @@ int main(int argc, char* argv[])
 		CHECK_GL_ERROR(glUniform4fv(light_position_location, 1, &light_position[0]));
 
 		// Draw our triangles.
-		CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, obj_faces.size() * 3, GL_UNSIGNED_INT, 0));
+		CHECK_GL_ERROR(glDrawElements(GL_TRIANGLE_STRIP, obj_faces.size() * 3, GL_UNSIGNED_INT, 0));
 
 		// FIXME: Render the floor
 		// Note: What you need to do is

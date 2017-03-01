@@ -1,4 +1,5 @@
 #include "menger.h"
+#include <iostream>
 
 namespace {
 	const int kMinLevel = 0;
@@ -8,10 +9,12 @@ namespace {
 Menger::Menger()
 {
 	// Add additional initialization if you like
+	std::cout << "Menger() default constructor" << std::endl;
 }
 
 Menger::~Menger()
 {
+	std::cout << "~Menger() deconstructor" << std::endl;
 }
 
 void
@@ -64,6 +67,7 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
  * when rendered, because they are "inside out." 
  * 
  */
+ void Createmenger();
 
  /** TODO: 5 points
   * Modify the keyboard callback so that pressing any key from '0' to '4'
