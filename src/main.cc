@@ -93,9 +93,9 @@ void
 CreateTriangle(std::vector<glm::vec4>& vertices,
         std::vector<glm::uvec3>& indices)
 {
-	vertices.push_back(glm::vec4(-0.5f, -0.5f, -0.5f, 1.0f));
-	vertices.push_back(glm::vec4(0.5f, -0.5f, -0.5f, 1.0f));
-	vertices.push_back(glm::vec4(0.0f, 0.5f, -0.5f, 1.0f));
+    vertices.push_back(glm::vec4(-10.5f, -10.5f, -10.5f, 1.0f));
+    vertices.push_back(glm::vec4(10.5f, -1.5f, -10.5f, 1.0f));
+    vertices.push_back(glm::vec4(10.0f, 10.5f, -10.5f, 1.0f));
 	indices.push_back(glm::uvec3(0, 1, 2));
 }
 
@@ -157,7 +157,7 @@ KeyCallback(GLFWwindow* window,
 
 int g_current_button;
 bool g_mouse_pressed;
-
+double last_y = 0.0;
 void
 MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y)
 {
@@ -166,10 +166,15 @@ MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y)
 	if (g_current_button == GLFW_MOUSE_BUTTON_LEFT) {
 		// FIXME: left drag
 	} else if (g_current_button == GLFW_MOUSE_BUTTON_RIGHT) {
+        if(mouse_y > last_y)
+            g_camera.zoomIn();
+        else if (last_y > mouse_y)
+            g_camera.zoomOut();
 		// FIXME: middle drag
 	} else if (g_current_button == GLFW_MOUSE_BUTTON_MIDDLE) {
 		// FIXME: right drag
 	}
+    last_y = mouse_y;
 }
 
 void

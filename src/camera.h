@@ -16,12 +16,15 @@ public:
         return ProjectionMatrix;
     }
     void computeMatricesFromInputs(GLFWwindow *);
+    void zoomIn(){camera_distance_ -= zoomSpeed;}
+    void zoomOut(){camera_distance_ += zoomSpeed;}
+
 	// FIXME: add functions to manipulate camera objects.
 private:
 	glm::mat4 ViewMatrix;
 	glm::mat4 ProjectionMatrix;
     // Initial position : on +Z
-    float camera_distance_ = 13.0;
+    float camera_distance_ = 3.0;
 
     glm::vec3 position = glm::vec3(0, 0, camera_distance_);
     // Initial horizontal angle : toward -Z
@@ -33,6 +36,7 @@ private:
 
     float speed = 3.0f; // 3 units / second
     float mouseSpeed = 0.002f;
+    float zoomSpeed = 10.2f;
 //	glm::vec3 look_ = glm::vec3(0.0f, 0.0f, -1.0f);
 //	glm::vec3 up_ = glm::vec3(0.0f, 1.0, 0.0f);
 //	glm::vec3 eye_ = glm::vec3(0.0f, 0.0f, camera_distance_);

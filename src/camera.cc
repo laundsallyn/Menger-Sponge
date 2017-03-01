@@ -1,6 +1,27 @@
 #include "camera.h"
 #include "glm/gtc/matrix_transform.hpp"
 
+glm::mat4 computeLookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up){
+    glm::vec3 const f(glm::normalize(center - eye));
+    glm::vec3 const s(glm::normalize(cross(f, up)));
+    glm::vec3 const u(glm::cross(s, f));
+
+    glm::mat4 Result(1.0);
+    Result[0][0] = s.x;
+    Result[1][0] = s.y;
+    Result[2][0] = s.z;
+    Result[0][1] = u.x;
+    Result[1][1] = u.y;
+    Result[2][1] = u.z;
+    Result[0][2] =-f.x;
+    Result[1][2] =-f.y;
+    Result[2][2] =-f.z;
+    Result[3][0] =-glm::dot(s, eye);
+    Result[3][1] =-glm::dot(u, eye);
+    Result[3][2] = glm::dot(f, eye);
+   return Result;
+}
+
 void Camera::computeMatricesFromInputs(GLFWwindow *window){
     // glfwGetTime is called only once, the first time this function is called
         static double lastTime = glfwGetTime();
@@ -14,13 +35,16 @@ void Camera::computeMatricesFromInputs(GLFWwindow *window){
         glfwGetCursorPos(window, &xpos, &ypos);
 
         // Reset mouse position for next frame
-        glfwSetCursorPos(window, 1920 / 2, 1280 / 2);
+//        glfwSetCursorPos(window, 1920 / 2, 1280 / 2);
 
-        // Compute new orientation
-        horizontalAngle += mouseSpeed * float(1920 / 2 - xpos);
-        verticalAngle += mouseSpeed * float(1280 / 2 - ypos);
-        //restrict vertical angle
-        //verticalAngle = 0;
+        if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
+            // Compute new orientation
+            horizontalAngle += mouseSpeed * float(1920 / 2 - xpos)/30;
+            verticalAngle += mouseSpeed * float(1280 / 2 - ypos)/30;
+            //restrict vertical angle
+            //verticalAngle = 0;
+
+        }
 
 
 
@@ -63,7 +87,7 @@ void Camera::computeMatricesFromInputs(GLFWwindow *window){
                                // Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
         ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
         // Camera matrix
-        ViewMatrix = glm::lookAt(
+        ViewMatrix = computeLookAt(
             position,           // Camera is here
             position + direction, // and looks here : at the same position, plus "direction"
             up                  // Head is up (set to 0,-1,0 to look upside-down)
