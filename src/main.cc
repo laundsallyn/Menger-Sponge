@@ -18,7 +18,7 @@
 int window_width = 800, window_height = 600;
 
 // VBO and VAO descriptors.
-enum { kVertexBuffer, kNormalBuffer, kIndexBuffer, kNumVbos };
+enum { kVertexBuffer, kIndexBuffer, kNumVbos };
 
 // These are our VAOs.
 enum { kGeometryVao, kFloorVao, kNumVaos };
@@ -31,27 +31,40 @@ GLuint g_buffer_objects[kNumVaos][kNumVbos];  // These will store VBO descriptor
 const char* vertex_shader =
 R"zzz(#version 330 core
 in vec4 vertex_position;
-in vec4 vertex_normal;
 uniform mat4 view;
-uniform mat4 projection;
 uniform vec4 light_position;
-out vec4 light_direction;
-out vec4 normal;
+out vec4 vs_light_direction;
 void main()
 {
-// Transform vertex into clipping coordinates
-	gl_Position = projection * view * vertex_position;
-// Lighting in camera coordinates
-//  Compute light direction and transform to camera coordinates
-        light_direction = view * (light_position - vertex_position);
-//  Transform normal to camera coordinates
-        normal = view * vertex_normal;
+	gl_Position = view * vertex_position;
+	vs_light_direction = -gl_Position + view * light_position;
+}
+)zzz";
+
+const char* geometry_shader =
+R"zzz(#version 330 core
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+uniform mat4 projection;
+in vec4 vs_light_direction[];
+flat out vec4 normal;
+out vec4 light_direction;
+void main()
+{
+	int n = 0;
+	normal = vec4(0.0, 0.0, 1.0f, 0.0);
+	for (n = 0; n < gl_in.length(); n++) {
+		light_direction = vs_light_direction[n];
+		gl_Position = projection * gl_in[n].gl_Position;
+		EmitVertex();
+	}
+	EndPrimitive();
 }
 )zzz";
 
 const char* fragment_shader =
 R"zzz(#version 330 core
-in vec4 normal;
+flat in vec4 normal;
 in vec4 light_direction;
 out vec4 fragment_color;
 void main()
@@ -72,9 +85,27 @@ in vec4 world_position;
 out vec4 fragment_color;
 void main()
 {
-	fragment_color = vec4(0.0, 1.0, 0.0, 1.0);
+	fragment_color = vec4(0.0, 0.0, 0.0, 1.0);
 }
 )zzz";
+
+void
+CreateTriangle(std::vector<glm::vec4>& vertices,
+        std::vector<glm::uvec3>& indices)
+{
+	vertices.push_back(glm::vec4(-0.5f, -0.5f, -0.5f, 1.0f));
+	vertices.push_back(glm::vec4(0.5f, -0.5f, -0.5f, 1.0f));
+	vertices.push_back(glm::vec4(0.0f, 0.5f, -0.5f, 1.0f));
+	indices.push_back(glm::uvec3(0, 1, 2));
+}
+
+// FIXME: Save geometry to OBJ file
+void
+SaveObj(const std::string& file,
+        const std::vector<glm::vec4>& vertices,
+        const std::vector<glm::uvec3>& indices)
+{
+}
 
 void
 ErrorCallback(int error, const char* description)
@@ -97,7 +128,9 @@ KeyCallback(GLFWwindow* window,
 	// you may want to re-organize this piece of code.
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	else if (key == GLFW_KEY_W && action != GLFW_RELEASE) {
+	else if (key == GLFW_KEY_S && mods == GLFW_MOD_CONTROL && action == GLFW_RELEASE) {
+		// FIXME: save geometry to OBJ
+	} else if (key == GLFW_KEY_W && action != GLFW_RELEASE) {
 		// FIXME: WASD
 	} else if (key == GLFW_KEY_S && action != GLFW_RELEASE) {
 	} else if (key == GLFW_KEY_A && action != GLFW_RELEASE) {
@@ -177,13 +210,12 @@ int main(int argc, char* argv[])
 	std::cout << "OpenGL version supported:" << version << "\n";
 
 	std::vector<glm::vec4> obj_vertices;
-	std::vector<glm::vec4> vtx_normals;
 	std::vector<glm::uvec3> obj_faces;
         
-        //FIXME: Create the geometry from a Menger object (in menger.cc).
+        //FIXME: Create the geometry from a Menger object.
+        CreateTriangle(obj_vertices, obj_faces);
+
 	g_menger->set_nesting_level(1);
-	g_menger->generate_geometry(obj_vertices, vtx_normals, obj_faces);
-	g_menger->set_clean();
 
 	glm::vec4 min_bounds = glm::vec4(std::numeric_limits<float>::max());
 	glm::vec4 max_bounds = glm::vec4(-std::numeric_limits<float>::max());
@@ -212,14 +244,6 @@ int main(int argc, char* argv[])
 	CHECK_GL_ERROR(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0));
 	CHECK_GL_ERROR(glEnableVertexAttribArray(0));
 
-	CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, g_buffer_objects[kGeometryVao][kNormalBuffer]));
-	// NOTE: We do not send anything right now, we just describe it to OpenGL.
-	CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
-				sizeof(float) * vtx_normals.size() * 4, nullptr,
-				GL_STATIC_DRAW));
-	CHECK_GL_ERROR(glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0));
-	CHECK_GL_ERROR(glEnableVertexAttribArray(1));
-
 	// Setup element array buffer.
 	CHECK_GL_ERROR(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_buffer_objects[kGeometryVao][kIndexBuffer]));
 	CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
@@ -227,12 +251,12 @@ int main(int argc, char* argv[])
 				&obj_faces[0], GL_STATIC_DRAW));
 
 	/*
- 	 * So far the geometry is loaded into g_buffer_objects[kGeometryVao][*].
-	 * These buffers are bound to g_array_objects[kGeometryVao]
+ 	 * By far, the geometry is loaded into g_buffer_objects[kGeometryVao][*].
+	 * These buffers are binded to g_array_objects[kGeometryVao]
 	 */
 
 	// FIXME: load the floor into g_buffer_objects[kFloorVao][*],
-	//        and bind the VBO to g_array_objects[kFloorVao]
+	//        and bind these VBO to g_array_objects[kFloorVao]
 
 	// Setup vertex shader.
 	GLuint vertex_shader_id = 0;
@@ -241,6 +265,14 @@ int main(int argc, char* argv[])
 	CHECK_GL_ERROR(glShaderSource(vertex_shader_id, 1, &vertex_source_pointer, nullptr));
 	glCompileShader(vertex_shader_id);
 	CHECK_GL_SHADER_ERROR(vertex_shader_id);
+
+	// Setup geometry shader.
+	GLuint geometry_shader_id = 0;
+	const char* geometry_source_pointer = geometry_shader;
+	CHECK_GL_ERROR(geometry_shader_id = glCreateShader(GL_GEOMETRY_SHADER));
+	CHECK_GL_ERROR(glShaderSource(geometry_shader_id, 1, &geometry_source_pointer, nullptr));
+	glCompileShader(geometry_shader_id);
+	CHECK_GL_SHADER_ERROR(geometry_shader_id);
 
 	// Setup fragment shader.
 	GLuint fragment_shader_id = 0;
@@ -255,22 +287,10 @@ int main(int argc, char* argv[])
 	CHECK_GL_ERROR(program_id = glCreateProgram());
 	CHECK_GL_ERROR(glAttachShader(program_id, vertex_shader_id));
 	CHECK_GL_ERROR(glAttachShader(program_id, fragment_shader_id));
-//	CHECK_GL_ERROR(glAttachShader(program_id, geometry_shader_id));
+	CHECK_GL_ERROR(glAttachShader(program_id, geometry_shader_id));
 
-	CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, g_buffer_objects[kGeometryVao][kVertexBuffer]));
-	// NOTE: We do not send anything right now, we just describe it to OpenGL.
-	CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
-				sizeof(float) * obj_vertices.size() * 4, nullptr,
-				GL_STATIC_DRAW));
-	CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, g_buffer_objects[kGeometryVao][kNormalBuffer]));
-	// NOTE: We do not send anything right now, we just describe it to OpenGL.
-	CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
-				sizeof(float) * vtx_normals.size() * 4, nullptr,
-				GL_STATIC_DRAW));
 	// Bind attributes.
 	CHECK_GL_ERROR(glBindAttribLocation(program_id, 0, "vertex_position"));
-
-	CHECK_GL_ERROR(glBindAttribLocation(program_id, 1, "vertex_normal"));
 	CHECK_GL_ERROR(glBindFragDataLocation(program_id, 0, "fragment_color"));
 	glLinkProgram(program_id);
 	CHECK_GL_PROGRAM_ERROR(program_id);
@@ -318,7 +338,7 @@ int main(int argc, char* argv[])
 		CHECK_GL_ERROR(glBindVertexArray(g_array_objects[kGeometryVao]));
 
 		if (g_menger && g_menger->is_dirty()) {
-		  g_menger->generate_geometry(obj_vertices, vtx_normals, obj_faces);
+			g_menger->generate_geometry(obj_vertices, obj_faces);
 			g_menger->set_clean();
 		}
 
@@ -337,11 +357,7 @@ int main(int argc, char* argv[])
 		CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
 		                            sizeof(float) * obj_vertices.size() * 4,
 		                            &obj_vertices[0], GL_STATIC_DRAW));
-		CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER,
-		                            g_buffer_objects[kGeometryVao][kNormalBuffer]));
-		CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
-		                            sizeof(float) * vtx_normals.size() * 4,
-		                            &vtx_normals[0], GL_STATIC_DRAW));
+
 		// Use our program.
 		CHECK_GL_ERROR(glUseProgram(program_id));
 

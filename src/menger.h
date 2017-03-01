@@ -12,7 +12,6 @@ public:
 	bool is_dirty() const;
 	void set_clean();
 	void generate_geometry(std::vector<glm::vec4>& obj_vertices,
-			       std::vector<glm::vec4>& vtx_normals,
 	                       std::vector<glm::uvec3>& obj_faces) const;
 private:
 	int nesting_level_ = 0;
