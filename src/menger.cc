@@ -52,7 +52,45 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	 * associated with that subcube. 
 	 */
 
-	 // Bounds of cube is -0.5 to 0.5
+	// Bounds of cube is -0.5 to 0.5
+
+	//TODO: test and remove
+	// WARNING: IF VERTICES ARE CHANGED, 
+	// INDICES MUST ALSO CHANGE TO MATCH
+	obj_vertices.push_back(glm::vec4(-0.5, -0.5, -0.5, 1.0f));
+	obj_vertices.push_back(glm::vec4( 0.5, -0.5, -0.5, 1.0f));
+	obj_vertices.push_back(glm::vec4(-0.5,  0.5, -0.5, 1.0f));
+	obj_vertices.push_back(glm::vec4( 0.5,  0.5, -0.5, 1.0f));
+
+	obj_vertices.push_back(glm::vec4( 0.5, -0.5,  0.5f, -1.0f));
+	obj_vertices.push_back(glm::vec4(-0.5, -0.5,  0.5f, -1.0f));
+	obj_vertices.push_back(glm::vec4( 0.5,  0.5,  0.5f, -1.0f));
+	obj_vertices.push_back(glm::vec4(-0.5, 0.5,  0.5f, -1.0f));
+
+	// face -Z
+	obj_faces.push_back(glm::uvec3(0, 1, 2));
+	obj_faces.push_back(glm::uvec3(1, 2, 3));
+
+	// face -X
+	obj_faces.push_back(glm::uvec3(1, 4, 3));
+	obj_faces.push_back(glm::uvec3(4, 6, 3));
+
+	// face +Z
+	obj_faces.push_back(glm::uvec3(4, 5, 6));
+	obj_faces.push_back(glm::uvec3(5, 7, 6));
+
+	// face +X
+	obj_faces.push_back(glm::uvec3(5, 0, 7));
+	obj_faces.push_back(glm::uvec3(0, 2, 7));
+
+	// face -Y
+	obj_faces.push_back(glm::uvec3(5, 4, 0));
+	obj_faces.push_back(glm::uvec3(4, 1, 0));
+
+	// face +Y
+	obj_faces.push_back(glm::uvec3(2, 3, 7));
+	obj_faces.push_back(glm::uvec3(3, 6, 7));
+
 
 	 // Determine bound of cube
 	 // calculate subcubes
@@ -75,11 +113,11 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
  * when rendered, because they are "inside out." 
  * 
  */
- void CreateMenger(std::vector<glm::vec4>&  obj_vertices, 
-	              std::vector<glm::uvec3>& obj_faces) const 
- {
-
- }
+void Menger::CreateMenger(std::vector<glm::vec4>&  obj_vertices, 
+              std::vector<glm::uvec3>& obj_faces) const
+{
+	generate_geometry(obj_vertices, obj_faces);
+}
 
 /**
  * Create a square, made of two triangles, to put into vertices
@@ -87,9 +125,48 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
  *
  */
 void CreateSquare(std::vector<glm::vec4>&  obj_vertices, 
-	              std::vector<glm::uvec3>& obj_faces) const 
+	              std::vector<glm::uvec3>& obj_faces) 
 {
 }
+
+class Cube {
+public:
+	Cube(float min, float max, bool isFull)
+			:min_bound(min), max_bound(max) {
+		std::cout << "Cube(f,f,b) constructor" << std::endl;
+		if (!isFull) {
+			//subdivide cube!
+			std::cout << "Subdividing cube" << std::endl;
+		}
+
+		if (min_bound > max_bound) {
+			std::cout << "WTF ARE YOU TRYING TO BUILD A CUBE BACKWARDS?!" << std::endl;
+		}
+
+	}
+
+	void generate_vertices() {
+		if (children.size() > 0) {
+			// have children place themselves, this cube does not
+		} else {
+			// Full cube, put self
+			// 12 vertices!!!
+			// Perhaps only 8? Can make use of indices!
+			glm::vec4(min_bound, min_bound, min_bound, 1.0f); 
+		}
+	}
+
+	void putVertices(std::vector<glm::vec4>& vertices,
+        			 std::vector<glm::uvec3>& indices) {
+
+	}
+
+protected:
+	Cube();
+	std::vector<Cube> children;
+	float min_bound;
+	float max_bound;
+};
 
  /** TODO: 5 points
   * Modify the keyboard callback so that pressing any key from '0' to '4'

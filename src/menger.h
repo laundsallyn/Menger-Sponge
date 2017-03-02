@@ -13,6 +13,8 @@ public:
 	void set_clean();
 	void generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	                       std::vector<glm::uvec3>& obj_faces) const;
+	void CreateMenger(std::vector<glm::vec4>&  obj_vertices, 
+              std::vector<glm::uvec3>& obj_faces) const;
 private:
 	int nesting_level_ = 0;
 	bool dirty_ = false;

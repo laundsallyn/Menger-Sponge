@@ -96,9 +96,7 @@ CreateTriangle(std::vector<glm::vec4>& vertices,
 	vertices.push_back(glm::vec4(-0.5f, -0.5f, -0.5f, 1.0f));
 	vertices.push_back(glm::vec4(0.5f, -0.5f, -0.5f, 1.0f));
 	vertices.push_back(glm::vec4(-0.5f, 0.5f, -0.5f, 1.0f));
-	vertices.push_back(glm::vec4(0.5f, 0.5f, -0.5f, 1.0f));
 	indices.push_back(glm::uvec3(0, 1, 2));
-	indices.push_back(glm::uvec3(1, 2, 3));
 }
 
 // FIXME: Save geometry to OBJ file
@@ -214,10 +212,12 @@ int main(int argc, char* argv[])
 	std::vector<glm::vec4> obj_vertices;
 	std::vector<glm::uvec3> obj_faces;
         
-        //FIXME: Create the geometry from a Menger object.
-        CreateTriangle(obj_vertices, obj_faces);
+    //FIXME: Create the geometry from a Menger object.
+    //CreateTriangle(obj_vertices, obj_faces);
+
 
 	g_menger->set_nesting_level(1);
+	g_menger->CreateMenger(obj_vertices, obj_faces);
 
 	glm::vec4 min_bounds = glm::vec4(std::numeric_limits<float>::max());
 	glm::vec4 max_bounds = glm::vec4(-std::numeric_limits<float>::max());
