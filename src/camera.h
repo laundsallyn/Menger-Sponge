@@ -20,7 +20,7 @@ private:
     float verticalAngle = 0.0f;
     // Initial Field of View
     float initialFoV = 45.0f;
-
+    float radius = 3.0;
 
     float speed = 13.0f; // 3 units / second
     float mouseSpeed = 0.002f;
@@ -32,8 +32,8 @@ public:
 	glm::mat4 get_projection_matrix () const{
         return ProjectionMatrix;
     }
-    void computeMatricesFromInputs(GLFWwindow *, double&, double&);
-
+    void FPSComputeMatricesFromInputs(GLFWwindow *, double&, double&);
+    void OrbitComputeMatricesFromInputs(GLFWwindow*, double&, double&);
 
 };
 

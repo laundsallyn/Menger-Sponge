@@ -1,6 +1,7 @@
 #include "camera.h"
 #include "glm/gtc/matrix_transform.hpp"
 using namespace std;
+
 glm::mat4 computeLookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up){
     glm::vec3 const f(glm::normalize(center - eye));
     glm::vec3 const s(glm::normalize(cross(f, up)));
@@ -22,8 +23,9 @@ glm::mat4 computeLookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up){
     return Result;
 }
 
-void Camera::computeMatricesFromInputs(GLFWwindow *window, double &init_x, double &init_y){
 
+
+void Camera::FPSComputeMatricesFromInputs(GLFWwindow *window, double &init_x, double &init_y){
     // glfwGetTime is called only once, the first time this function is called
     static double lastTime = glfwGetTime();
     // Compute time difference between current and last frame
@@ -42,6 +44,8 @@ void Camera::computeMatricesFromInputs(GLFWwindow *window, double &init_x, doubl
 
         horizontalAngle += mouseSpeed * deltaX /30;
         verticalAngle += mouseSpeed * deltaY/30;
+        init_x = xpos;
+        init_y = ypos;
 
     }
     if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
@@ -52,7 +56,8 @@ void Camera::computeMatricesFromInputs(GLFWwindow *window, double &init_x, doubl
             camera_distance_ += deltaTime * speed;
             position.z -= deltaTime * speed;
         }
-
+        init_x = xpos;
+        init_y = ypos;
     }
 
 
@@ -105,3 +110,79 @@ void Camera::computeMatricesFromInputs(GLFWwindow *window, double &init_x, doubl
     lastTime = currentTime;
 }
 
+void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, double &init_y){
+    // glfwGetTime is called only once, the first time this function is called
+    static double lastTime = glfwGetTime();
+    // Compute time difference between current and last frame
+    double currentTime = glfwGetTime();
+    deltaTime = float(currentTime - lastTime);
+    // Get mouse position
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+
+    glm::vec3 objectCenter(0, 0, 0);
+
+
+    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
+        // Compute new orientation
+        float deltaX = (float)(init_x - xpos);
+        float deltaY = (float)(init_y - ypos);
+
+        horizontalAngle += mouseSpeed * deltaX /30;
+        verticalAngle += mouseSpeed * deltaY/30;
+        init_x = xpos;
+        init_y = ypos;
+
+    }
+    if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
+        if (init_y - ypos < 0.0)
+            radius -= deltaTime * speed;
+        else if (init_y - ypos > 0.0)
+            radius += deltaTime * speed;
+        init_x = xpos;
+        init_y = ypos;
+    }
+
+
+    glm::vec3 direction(
+                cos(verticalAngle) * sin(horizontalAngle),
+                sin(verticalAngle),
+                cos(verticalAngle) * cos(horizontalAngle)
+                );
+
+    // Right vector
+    glm::vec3 right = glm::vec3(
+                sin(horizontalAngle - 3.14f / 2.0f),
+                0,
+                cos(horizontalAngle - 3.14f / 2.0f)
+                );
+
+    // Up vector
+    glm::vec3 up = glm::cross(right, direction);
+
+    // Move forward
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        radius -= deltaTime * speed;
+    }
+    // Move backward
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        radius += deltaTime * speed;
+    }
+
+    glm::vec3 objectOffset(radius*cos(horizontalAngle), radius*sin(verticalAngle), radius*sin(horizontalAngle));
+    position = objectCenter+objectOffset;
+
+    float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
+
+    // Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
+    ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
+    // Camera matrix
+    ViewMatrix = computeLookAt(
+                position,           // Camera is here
+                objectCenter, // and looks here : at the same position, plus "direction"
+                up                  // Head is up (set to 0,-1,0 to look upside-down)
+                );
+
+    // For the next frame, the "last time" will be "now"
+    lastTime = currentTime;
+}
