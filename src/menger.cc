@@ -62,10 +62,10 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	obj_vertices.push_back(glm::vec4(-0.5,  0.5, -0.5, 1.0f));
 	obj_vertices.push_back(glm::vec4( 0.5,  0.5, -0.5, 1.0f));
 
-	obj_vertices.push_back(glm::vec4( 0.5, -0.5,  0.5f, -1.0f));
-	obj_vertices.push_back(glm::vec4(-0.5, -0.5,  0.5f, -1.0f));
-	obj_vertices.push_back(glm::vec4( 0.5,  0.5,  0.5f, -1.0f));
-	obj_vertices.push_back(glm::vec4(-0.5, 0.5,  0.5f, -1.0f));
+	obj_vertices.push_back(glm::vec4( 0.5, -0.5,  0.5f, 1.0f));
+	obj_vertices.push_back(glm::vec4(-0.5, -0.5,  0.5f, 1.0f));
+	obj_vertices.push_back(glm::vec4( 0.5,  0.5,  0.5f, 1.0f));
+	obj_vertices.push_back(glm::vec4(-0.5,  0.5,  0.5f, 1.0f));
 
 	// face -Z
 	obj_faces.push_back(glm::uvec3(0, 1, 2));
