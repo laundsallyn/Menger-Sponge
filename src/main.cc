@@ -158,24 +158,24 @@ KeyCallback(GLFWwindow* window,
 
 int g_current_button;
 bool g_mouse_pressed;
-double last_y = 0.0;
+double init_x, init_y = 0.0;
+
 void
 MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y)
 {
-	if (!g_mouse_pressed)
-		return;
-	if (g_current_button == GLFW_MOUSE_BUTTON_LEFT) {
-		// FIXME: left drag
+    if (!g_mouse_pressed){
+        init_x = mouse_x;
+        init_y = mouse_y;
+        return;
+    }
+    if (g_current_button == GLFW_MOUSE_BUTTON_LEFT) {
+        // FIXME: left drag
 	} else if (g_current_button == GLFW_MOUSE_BUTTON_RIGHT) {
-        if(mouse_y > last_y)
-            g_camera.zoomIn();
-        else if (last_y > mouse_y)
-            g_camera.zoomOut();
 		// FIXME: middle drag
 	} else if (g_current_button == GLFW_MOUSE_BUTTON_MIDDLE) {
 		// FIXME: right drag
 	}
-    last_y = mouse_y;
+
 }
 
 void
@@ -348,7 +348,7 @@ int main(int argc, char* argv[])
 			g_menger->generate_geometry(obj_vertices, obj_faces);
 			g_menger->set_clean();
 		}
-        g_camera.computeMatricesFromInputs(window);
+        g_camera.computeMatricesFromInputs(window, init_x, init_y);
         // Compute the projection matrix.
         glm::mat4 projection_matrix = g_camera.get_projection_matrix();
 
