@@ -54,6 +54,32 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 
 	// Bounds of cube is -0.5 to 0.5
 
+	 // Determine bound of subcube
+	 // calculate subcubes
+	 // determine which subcubes should be drawn
+	 // ifShouldBeDrawn, call CreateMenger on that subcube
+
+	CreateMenger(obj_vertices, obj_faces);
+
+}
+
+/** TODO: 20 points
+ * Implement CreateMenger to append the vertices and triangles of 
+ * subcubes that should be drawn. This should properly position and 
+ * scale subcubes as described in pseudocode, then populate vertices 
+ * and faces with their values for rendering. You need to ensure 
+ * that cube faces (consisting of two triangles) have outward-pointing
+ * normals. This means that for every triangle with vertices v_i,v_j,v_k, 
+ * the triangle normal (vj-vi) x (vk-vi) must point *away* from the cube.
+ * Incorrectly-oriented triangles can be fixed by permuting the order
+ * of the triangle's vertex indices. If triangles are not oriented 
+ * correctly, they will appear incorrectly shaded (probably black) 
+ * when rendered, because they are "inside out." 
+ * 
+ */
+void Menger::CreateMenger(std::vector<glm::vec4>&  obj_vertices, 
+              std::vector<glm::uvec3>& obj_faces) const
+{
 	//TODO: test and remove
 	// WARNING: IF VERTICES ARE CHANGED, 
 	// INDICES MUST ALSO CHANGE TO MATCH
@@ -90,42 +116,6 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	// face +Y
 	obj_faces.push_back(glm::uvec3(2, 3, 7));
 	obj_faces.push_back(glm::uvec3(3, 6, 7));
-
-
-	 // Determine bound of cube
-	 // calculate subcubes
-	 // determine which subcubes should be drawn
-	 // ifShouldBeDrawn, call CreateMenger on that subcube
-
-}
-
-/** TODO: 20 points
- * Implement CreateMenger to append the vertices and triangles of 
- * subcubes that should be drawn. This should properly position and 
- * scale subcubes as described in pseudocode, then populate vertices 
- * and faces with their values for rendering. You need to ensure 
- * that cube faces (consisting of two triangles) have outward-pointing
- * normals. This means that for every triangle with vertices v_i,v_j,v_k, 
- * the triangle normal (vj-vi) x (vk-vi) must point *away* from the cube.
- * Incorrectly-oriented triangles can be fixed by permuting the order
- * of the triangle's vertex indices. If triangles are not oriented 
- * correctly, they will appear incorrectly shaded (probably black) 
- * when rendered, because they are "inside out." 
- * 
- */
-void Menger::CreateMenger(std::vector<glm::vec4>&  obj_vertices, 
-              std::vector<glm::uvec3>& obj_faces) const
-{
-}
-
-/**
- * Create a square, made of two triangles, to put into vertices
- * and faces
- *
- */
-void CreateSquare(std::vector<glm::vec4>&  obj_vertices, 
-	              std::vector<glm::uvec3>& obj_faces) 
-{
 }
 
 class Cube {
