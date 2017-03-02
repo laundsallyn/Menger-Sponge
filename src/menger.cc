@@ -1,5 +1,6 @@
 #include "menger.h"
 #include <iostream>
+#include <queue>
 
 namespace {
 	const int kMinLevel = 0;
@@ -52,12 +53,21 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	 * associated with that subcube. 
 	 */
 
-	// Bounds of cube is -0.5 to 0.5
+	// Bounds of whole cube is -0.5 to 0.5
+	float min_bound = -0.5;
+	float max_bound = 0.5;
+	float offsetOfCube = (max_bound - min_bound) / 3;
+	std::queue<Cube> queue; //FIFO queue, push cubes as wanted
 
-	 // Determine bound of subcube
-	 // calculate subcubes
-	 // determine which subcubes should be drawn
-	 // ifShouldBeDrawn, call CreateMenger on that subcube
+	// Start with a cube
+	Cube start(glm::vec4(min_bound), glm::vec4(max_bound), true);
+	queue.push(start);
+
+	for (int i = 0; i < nesting_level_; ++i) {
+		//for each cube
+			// divide cube in 27
+			// delete 7 inner cubes
+	}
 
 	CreateMenger(obj_vertices, obj_faces);
 
@@ -120,9 +130,9 @@ void Menger::CreateMenger(std::vector<glm::vec4>&  obj_vertices,
 
 class Cube {
 public:
-	Cube(float min, float max, bool isFull)
+	Cube(glm::vec4 min, glm::vec4 max, bool isFull)
 			:min_bound(min), max_bound(max) {
-		std::cout << "Cube(f,f,b) constructor" << std::endl;
+		std::cout << "Cube(vec4,vec4,b) constructor" << std::endl;
 		if (!isFull) {
 			//subdivide cube!
 			std::cout << "Subdividing cube" << std::endl;
@@ -152,9 +162,8 @@ public:
 
 protected:
 	Cube();
-	std::vector<Cube> children;
-	float min_bound;
-	float max_bound;
+	glm::vec4 min_corner;
+	glm::vec4 max_corner;
 };
 
  /** TODO: 5 points
