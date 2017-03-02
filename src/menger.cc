@@ -60,7 +60,10 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	std::queue<Cube> queue; //FIFO queue, push cubes as wanted
 
 	// Start with a cube
-	Cube start(glm::vec4(min_bound), glm::vec4(max_bound), true);
+	Cube start = Cube(glm::vec4(min_bound, min_bound, min_bound, 1.0f),
+	 		   		  glm::vec4(max_bound, max_bound, max_bound, 1.0f),
+	 		   		  true
+	);
 	queue.push(start);
 
 	for (int i = 0; i < nesting_level_; ++i) {
@@ -128,43 +131,18 @@ void Menger::CreateMenger(std::vector<glm::vec4>&  obj_vertices,
 	obj_faces.push_back(glm::uvec3(3, 6, 7));
 }
 
-class Cube {
-public:
-	Cube(glm::vec4 min, glm::vec4 max, bool isFull)
+Cube::Cube(glm::vec4 min, glm::vec4 max, bool isFull)
 			:min_bound(min), max_bound(max) {
-		std::cout << "Cube(vec4,vec4,b) constructor" << std::endl;
-		if (!isFull) {
-			//subdivide cube!
-			std::cout << "Subdividing cube" << std::endl;
-		}
-
-		if (min_bound > max_bound) {
-			std::cout << "WTF ARE YOU TRYING TO BUILD A CUBE BACKWARDS?!" << std::endl;
-		}
-
+	std::cout << "Cube(vec4,vec4,b) constructor" << std::endl;
+	if (!isFull) {
+		//subdivide cube!
+		std::cout << "Subdividing cube" << std::endl;
 	}
 
-	void generate_vertices() {
-		if (children.size() > 0) {
-			// have children place themselves, this cube does not
-		} else {
-			// Full cube, put self
-			// 12 vertices!!!
-			// Perhaps only 8? Can make use of indices!
-			glm::vec4(min_bound, min_bound, min_bound, 1.0f); 
-		}
-	}
+}
 
-	void putVertices(std::vector<glm::vec4>& vertices,
-        			 std::vector<glm::uvec3>& indices) {
-
-	}
-
-protected:
-	Cube();
-	glm::vec4 min_corner;
-	glm::vec4 max_corner;
-};
+void Cube::generate_vertices() {
+}
 
  /** TODO: 5 points
   * Modify the keyboard callback so that pressing any key from '0' to '4'

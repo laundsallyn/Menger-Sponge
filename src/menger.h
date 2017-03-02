@@ -4,6 +4,17 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+class Cube {
+public: 
+	Cube(glm::vec4 min, glm::vec4 max, bool isFull);
+	void generate_vertices();
+
+protected:
+	Cube();
+	glm::vec4 min_bound;
+	glm::vec4 max_bound;
+};
+
 class Menger {
 public:
 	Menger();
