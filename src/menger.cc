@@ -53,8 +53,7 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	 * associated with that subcube. 
 	 */
 
-	// Bounds of whole cube is -0.5 to 0.5
-	float min_bound = -0.5;
+	float min_bound = -0.5; // Bounds of whole cube is -0.5 to 0.5
 	float max_bound = 0.5;
 	float offsetOfCube = (max_bound - min_bound) / 3;
 	std::queue<Cube> queue; //FIFO queue, push cubes as wanted
@@ -67,12 +66,28 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	queue.push(start);
 
 	for (int i = 0; i < nesting_level_; ++i) {
-		//for each cube
-			// divide cube in 27
+		//for each cube (at this level)
+		int m = queue.size();
+		int n = 0;
+		Cube *cubeptr;
+		while (n < m) {
+			cubeptr = queue.front(); // get cube
+			queue.pop();   // remove cube from queue
+			//divide cube in 27 cubes
 			// delete 7 inner cubes
+			++n;
+		}
 	}
 
-	CreateMenger(obj_vertices, obj_faces);
+	// queue should be filled with subcubes.
+	// have subcubes add into these vertices
+	int vertex_count = 0;
+	while (!queue.empty()) {
+		queue.pop();
+		CreateMenger(obj_vertices, obj_faces);
+		vertex_count += 8;
+	}
+	
 
 }
 
