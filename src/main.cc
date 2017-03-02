@@ -93,15 +93,10 @@ void
 CreateTriangle(std::vector<glm::vec4>& vertices,
         std::vector<glm::uvec3>& indices)
 {
-<<<<<<< HEAD
-	vertices.push_back(glm::vec4(-0.5f, -0.5f, -0.5f, 1.0f));
-	vertices.push_back(glm::vec4(0.5f, -0.5f, -0.5f, 1.0f));
-	vertices.push_back(glm::vec4(-0.5f, 0.5f, -0.5f, 1.0f));
-=======
+
     vertices.push_back(glm::vec4(-10.5f, -10.5f, -10.5f, 1.0f));
     vertices.push_back(glm::vec4(10.5f, -1.5f, -10.5f, 1.0f));
     vertices.push_back(glm::vec4(10.0f, 10.5f, -10.5f, 1.0f));
->>>>>>> camera
 	indices.push_back(glm::uvec3(0, 1, 2));
 }
 
