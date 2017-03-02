@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
 
 
 	g_menger->set_nesting_level(1);
-	g_menger->CreateMenger(obj_vertices, obj_faces);
+	g_menger->generate_geometry(obj_vertices, obj_faces);
 
 	glm::vec4 min_bounds = glm::vec4(std::numeric_limits<float>::max());
 	glm::vec4 max_bounds = glm::vec4(-std::numeric_limits<float>::max());

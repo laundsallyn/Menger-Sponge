@@ -116,7 +116,6 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 void Menger::CreateMenger(std::vector<glm::vec4>&  obj_vertices, 
               std::vector<glm::uvec3>& obj_faces) const
 {
-	generate_geometry(obj_vertices, obj_faces);
 }
 
 /**
