@@ -15,7 +15,7 @@
 #include "menger.h"
 #include "camera.h"
 
-int window_width = 800, window_height = 600;
+int window_width = 1920, window_height = 1280;
 
 // VBO and VAO descriptors.
 enum { kVertexBuffer, kIndexBuffer, kNumVbos };
@@ -93,9 +93,15 @@ void
 CreateTriangle(std::vector<glm::vec4>& vertices,
         std::vector<glm::uvec3>& indices)
 {
+<<<<<<< HEAD
 	vertices.push_back(glm::vec4(-0.5f, -0.5f, -0.5f, 1.0f));
 	vertices.push_back(glm::vec4(0.5f, -0.5f, -0.5f, 1.0f));
 	vertices.push_back(glm::vec4(-0.5f, 0.5f, -0.5f, 1.0f));
+=======
+    vertices.push_back(glm::vec4(-10.5f, -10.5f, -10.5f, 1.0f));
+    vertices.push_back(glm::vec4(10.5f, -1.5f, -10.5f, 1.0f));
+    vertices.push_back(glm::vec4(10.0f, 10.5f, -10.5f, 1.0f));
+>>>>>>> camera
 	indices.push_back(glm::uvec3(0, 1, 2));
 }
 
@@ -157,7 +163,7 @@ KeyCallback(GLFWwindow* window,
 
 int g_current_button;
 bool g_mouse_pressed;
-
+double last_y = 0.0;
 void
 MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y)
 {
@@ -166,10 +172,15 @@ MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y)
 	if (g_current_button == GLFW_MOUSE_BUTTON_LEFT) {
 		// FIXME: left drag
 	} else if (g_current_button == GLFW_MOUSE_BUTTON_RIGHT) {
+        if(mouse_y > last_y)
+            g_camera.zoomIn();
+        else if (last_y > mouse_y)
+            g_camera.zoomOut();
 		// FIXME: middle drag
 	} else if (g_current_button == GLFW_MOUSE_BUTTON_MIDDLE) {
 		// FIXME: right drag
 	}
+    last_y = mouse_y;
 }
 
 void
@@ -325,7 +336,6 @@ int main(int argc, char* argv[])
 	GLint floor_light_position_location = 0;
 
 	glm::vec4 light_position = glm::vec4(10.0f, 10.0f, 10.0f, 1.0f);
-	float aspect = 0.0f;
 	float theta = 0.0f;
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -343,15 +353,15 @@ int main(int argc, char* argv[])
 			g_menger->generate_geometry(obj_vertices, obj_faces);
 			g_menger->set_clean();
 		}
+        g_camera.computeMatricesFromInputs(window);
+        // Compute the projection matrix.
+        glm::mat4 projection_matrix = g_camera.get_projection_matrix();
 
-		// Compute the projection matrix.
-		aspect = static_cast<float>(window_width) / window_height;
-		glm::mat4 projection_matrix =
-			glm::perspective(glm::radians(45.0f), aspect, 0.0001f, 1000.0f);
-
-		// Compute the view matrix
-		// FIXME: change eye and center through mouse/keyboard events.
-		glm::mat4 view_matrix = g_camera.get_view_matrix();
+        // Compute the view matrix
+        // FIXME: change eye and center through mouse/keyboard events.
+        glm::mat4 view_matrix = g_camera.get_view_matrix();
+        glm::mat4 model_matrix = glm::mat4(1.0f);
+        glm::mat4 mvp = projection_matrix * view_matrix * model_matrix;
 
 		// Send vertices to the GPU.
 		CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER,
