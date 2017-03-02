@@ -56,39 +56,38 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	float min_bound = -0.5; // Bounds of whole cube is -0.5 to 0.5
 	float max_bound = 0.5;
 	float offsetOfCube = (max_bound - min_bound) / 3;
-	std::queue<Cube> queue; //FIFO queue, push cubes as wanted
+	std::queue<Cube> cube_list; //FIFO queue, push cubes as wanted
 
 	// Start with a cube
 	Cube start = Cube(glm::vec4(min_bound, min_bound, min_bound, 1.0f),
 	 		   		  glm::vec4(max_bound, max_bound, max_bound, 1.0f),
 	 		   		  true
 	);
-	queue.push(start);
+	cube_list.push(start);
 
 	for (int i = 0; i < nesting_level_; ++i) {
 		//for each cube (at this level)
-		int m = queue.size();
-		int n = 0;
+		int m = cube_list.size();
 		Cube *cubeptr;
-		while (n < m) {
-			cubeptr = queue.front(); // get cube
-			queue.pop();   // remove cube from queue
-			//divide cube in 27 cubes
-			// delete 7 inner cubes
-			++n;
+		for (int n = 0; n < m; ++n) {
+			cubeptr = &(cube_list.front());
+			cubeptr->print();
+			// create subcubes from this cube
+			// add (drawn) subcubes to queue
+			// pop "parent" cube
+			// cube_list.pop();
 		}
 	}
 
 	// queue should be filled with subcubes.
 	// have subcubes add into these vertices
 	int vertex_count = 0;
-	while (!queue.empty()) {
-		queue.pop();
+	while (!cube_list.empty()) {
 		CreateMenger(obj_vertices, obj_faces);
 		vertex_count += 8;
+		cube_list.pop();
 	}
 	
-
 }
 
 /** TODO: 20 points
@@ -157,6 +156,18 @@ Cube::Cube(glm::vec4 min, glm::vec4 max, bool isFull)
 }
 
 void Cube::generate_vertices() {
+}
+
+void Cube::print() {
+	std::cout << "Cube print!" << std::endl;
+}
+
+glm::vec4& Cube::get_min_bound() {
+	return min_bound;
+}
+
+glm::vec4& Cube::get_max_bound() {
+	return max_bound;
 }
 
  /** TODO: 5 points

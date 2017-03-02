@@ -8,6 +8,9 @@ class Cube {
 public: 
 	Cube(glm::vec4 min, glm::vec4 max, bool isFull);
 	void generate_vertices();
+	void print();
+	glm::vec4& get_min_bound();
+	glm::vec4& get_max_bound();
 
 protected:
 	Cube();
