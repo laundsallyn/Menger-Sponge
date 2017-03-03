@@ -38,13 +38,12 @@ void Camera::FPSComputeMatricesFromInputs(GLFWwindow *window, double &init_x, do
 
 
     if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
-        cout<<"@@@@@@@@@@"<<endl;
         // Compute new orientation
         float deltaX = (float)(init_x - xpos);
         float deltaY = (float)(init_y - ypos);
 
-        horizontalAngle += mouseSpeed * deltaX /30;
-        verticalAngle += mouseSpeed * deltaY/30;
+        horizontalAngle += mouseSpeed * deltaX /2;
+        verticalAngle += mouseSpeed * deltaY/2;
         init_x = xpos;
         init_y = ypos;
 
