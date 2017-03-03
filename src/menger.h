@@ -10,8 +10,7 @@ public:
 	Cube(glm::vec4 min, glm::vec4 max, bool isFull);
 	void print();
 	void generate_cube(std::vector<glm::vec4>& obj_vertices,
-	                   std::vector<glm::uvec3>& obj_faces, 
-	                   int voff);
+	                   std::vector<glm::uvec3>& obj_faces);
 	glm::vec4& get_min_bound();
 	glm::vec4& get_max_bound();
 
