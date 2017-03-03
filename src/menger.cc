@@ -118,9 +118,9 @@ void create_subcubes(Cube* cubeptr, std::queue<Cube>& cube_list) {
 
 				// TODO: comment out
 				// DEBUG: cubes sharing verts?
-				if ( count < 4 || count > 6) {
-					continue;
-				}
+				// if ( count < 4 || count > 6) {
+				// 	continue;
+				// }
 
 				glm::vec4 submin = min + glm::vec4(x_off*k, y_off*j, z_off*i, 0.0f);
 				glm::vec4 submax = min + glm::vec4(x_off*(k+1), y_off*(j+1), z_off*(i+1), 0.0f);
@@ -159,79 +159,6 @@ void Menger::CreateMenger(std::vector<glm::vec4>&  obj_vertices,
 		std::cout << "obj_vert size" << obj_vertices.size() << std::endl;
 		cube_list.pop();
 	}
-
-	//TODO: test and remove
-	// WARNING: IF VERTICES ARE CHANGED, 
-	// INDICES MUST ALSO CHANGE TO MATCH
-	// obj_vertices.push_back(glm::vec4(-0.5, -0.5, -0.5, 1.0f));
-	// obj_vertices.push_back(glm::vec4( 0.5, -0.5, -0.5, 1.0f));
-	// obj_vertices.push_back(glm::vec4(-0.5,  0.5, -0.5, 1.0f));
-	// obj_vertices.push_back(glm::vec4( 0.5,  0.5, -0.5, 1.0f));
-
-	// obj_vertices.push_back(glm::vec4( 0.5, -0.5,  0.5f, 1.0f));
-	// obj_vertices.push_back(glm::vec4(-0.5, -0.5,  0.5f, 1.0f));
-	// obj_vertices.push_back(glm::vec4( 0.5,  0.5,  0.5f, 1.0f));
-	// obj_vertices.push_back(glm::vec4(-0.5,  0.5,  0.5f, 1.0f));
-
-	// int voff = obj_vertices.size();
-
-	// obj_vertices.push_back(glm::vec4(1.0, 1.0, 1.0, 1.0f));
-	// obj_vertices.push_back(glm::vec4(2.0, 1.0, 1.0, 1.0f));
-	// obj_vertices.push_back(glm::vec4(1.0, 2.0, 1.0, 1.0f));
-	// obj_vertices.push_back(glm::vec4(2.0, 2.0, 1.0, 1.0f));
-
-	// obj_vertices.push_back(glm::vec4(2.0, 1.0,  2.0, 1.0f));
-	// obj_vertices.push_back(glm::vec4(1.0, 1.0,  2.0, 1.0f));
-	// obj_vertices.push_back(glm::vec4(2.0, 2.0,  2.0, 1.0f));
-	// obj_vertices.push_back(glm::vec4(1.0, 2.0,  2.0, 1.0f));
-
-	// // face -Z
-	// obj_faces.push_back(glm::uvec3( 0,  1,  2));
-	// obj_faces.push_back(glm::uvec3( 1,  2,  3));
-
-	// // face -X
-	// obj_faces.push_back(glm::uvec3( 1,  4,  3));
-	// obj_faces.push_back(glm::uvec3( 4,  6,  3));
-
-	// // face +Z
-	// obj_faces.push_back(glm::uvec3( 4,  5,  6));
-	// obj_faces.push_back(glm::uvec3( 5,  7,  6));
-
-	// // face +X
-	// obj_faces.push_back(glm::uvec3( 5,  0,  7));
-	// obj_faces.push_back(glm::uvec3( 0,  2,  7));
-
-	// // face -Y
-	// obj_faces.push_back(glm::uvec3( 5,  4,  0));
-	// obj_faces.push_back(glm::uvec3( 4,  1,  0));
-
-	// // face +Y
-	// obj_faces.push_back(glm::uvec3( 2,  3,  7));
-	// obj_faces.push_back(glm::uvec3( 3,  6,  7));
-	
-	// // face -Z
-	// obj_faces.push_back(glm::uvec3(voff + 0, voff + 1, voff + 2));
-	// obj_faces.push_back(glm::uvec3(voff + 1, voff + 2, voff + 3));
-
-	// // face -X
-	// obj_faces.push_back(glm::uvec3(voff + 1, voff + 4, voff + 3));
-	// obj_faces.push_back(glm::uvec3(voff + 4, voff + 6, voff + 3));
-
-	// // face +Z
-	// obj_faces.push_back(glm::uvec3(voff + 4, voff + 5, voff + 6));
-	// obj_faces.push_back(glm::uvec3(voff + 5, voff + 7, voff + 6));
-
-	// // face +X
-	// obj_faces.push_back(glm::uvec3(voff + 5, voff + 0, voff + 7));
-	// obj_faces.push_back(glm::uvec3(voff + 0, voff + 2, voff + 7));
-
-	// // face -Y
-	// obj_faces.push_back(glm::uvec3(voff + 5, voff + 4, voff + 0));
-	// obj_faces.push_back(glm::uvec3(voff + 4, voff + 1, voff + 0));
-
-	// // face +Y
-	// obj_faces.push_back(glm::uvec3(voff + 2, voff + 3, voff + 7));
-	// obj_faces.push_back(glm::uvec3(voff + 3, voff + 6, voff + 7));
 }
 
 Cube::Cube(glm::vec4 min, glm::vec4 max, bool isFull)
