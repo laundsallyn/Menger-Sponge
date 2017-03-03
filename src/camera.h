@@ -11,7 +11,7 @@ private:
     glm::mat4 ViewMatrix;
     glm::mat4 ProjectionMatrix;
     // Initial position : on +Z
-    float camera_distance_ = 3.0;
+    float camera_distance_ = 5.0;
     float deltaTime;
     glm::vec3 position ;
     // Initial horizontal angle : toward -Z
@@ -20,10 +20,13 @@ private:
     float verticalAngle = 0.0f;
     // Initial Field of View
     float initialFoV = 45.0f;
-    float radius = 3.0;
+    glm::vec3 objectCenter = glm::vec3(0.0, 0.0, 0.0);
 
-    float speed = 13.0f; // 3 units / second
+    float speed = 20.0f; // 3 units / second
     float mouseSpeed = 0.002f;
+
+    float radius = 5.0f;
+
 public:
 
 	glm::mat4 get_view_matrix() const{
@@ -34,7 +37,12 @@ public:
     }
     void FPSComputeMatricesFromInputs(GLFWwindow *, double&, double&);
     void OrbitComputeMatricesFromInputs(GLFWwindow*, double&, double&);
-
+    void reset(){
+         camera_distance_ = 3.0;
+         horizontalAngle = 3.14f;
+         verticalAngle = 0.0f;
+         initialFoV = 45.0f;
+    }
 };
 
 #endif

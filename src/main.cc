@@ -93,9 +93,9 @@ void
 CreateTriangle(std::vector<glm::vec4>& vertices,
         std::vector<glm::uvec3>& indices)
 {
-    vertices.push_back(glm::vec4(-10.5f, -10.5f, -10.5f, 1.0f));
-    vertices.push_back(glm::vec4(10.5f, -1.5f, -10.5f, 1.0f));
-    vertices.push_back(glm::vec4(10.0f, 10.5f, -10.5f, 1.0f));
+    vertices.push_back(glm::vec4(1.5f,0.f, 1.5f, 1.0f));
+    vertices.push_back(glm::vec4(1.5f, 0.f, -1.5f, 1.0f));
+    vertices.push_back(glm::vec4(-1.0f, 0.f, 1.5f, 1.0f));
 	indices.push_back(glm::uvec3(0, 1, 2));
 }
 
@@ -140,8 +140,9 @@ KeyCallback(GLFWwindow* window,
 	} else if (key == GLFW_KEY_RIGHT && action != GLFW_RELEASE) {
 	} else if (key == GLFW_KEY_DOWN && action != GLFW_RELEASE) {
 	} else if (key == GLFW_KEY_UP && action != GLFW_RELEASE) {
-    } else if (key == GLFW_KEY_C) {
-        FPSMode = false;
+    } else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+        FPSMode = !FPSMode;
+        g_camera.reset();
 	}
 	if (!g_menger)
 		return ; // 0-4 only available in Menger mode.
