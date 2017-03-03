@@ -3,12 +3,15 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <queue>
 
 class Cube {
 public: 
 	Cube(glm::vec4 min, glm::vec4 max, bool isFull);
-	void generate_vertices();
 	void print();
+	void generate_cube(std::vector<glm::vec4>& obj_vertices,
+	                   std::vector<glm::uvec3>& obj_faces, 
+	                   int voff);
 	glm::vec4& get_min_bound();
 	glm::vec4& get_max_bound();
 
@@ -27,9 +30,10 @@ public:
 	void set_clean();
 	void generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	                       std::vector<glm::uvec3>& obj_faces) const;
-	void CreateMenger(std::vector<glm::vec4>&  obj_vertices, 
-              std::vector<glm::uvec3>& obj_faces) const;
 private:
+	void CreateMenger(std::vector<glm::vec4>&  obj_vertices, 
+              		  std::vector<glm::uvec3>& obj_faces, 
+              		  std::queue<Cube>&        cube_list) const;
 	int nesting_level_ = 0;
 	bool dirty_ = false;
 };
