@@ -93,7 +93,6 @@ void
 CreateTriangle(std::vector<glm::vec4>& vertices,
         std::vector<glm::uvec3>& indices)
 {
-
     vertices.push_back(glm::vec4(-10.5f, -10.5f, -10.5f, 1.0f));
     vertices.push_back(glm::vec4(10.5f, -1.5f, -10.5f, 1.0f));
     vertices.push_back(glm::vec4(10.0f, 10.5f, -10.5f, 1.0f));
@@ -116,7 +115,7 @@ ErrorCallback(int error, const char* description)
 
 std::shared_ptr<Menger> g_menger;
 Camera g_camera;
-
+bool FPSMode = true;
 void
 KeyCallback(GLFWwindow* window,
             int key,
@@ -141,8 +140,9 @@ KeyCallback(GLFWwindow* window,
 	} else if (key == GLFW_KEY_RIGHT && action != GLFW_RELEASE) {
 	} else if (key == GLFW_KEY_DOWN && action != GLFW_RELEASE) {
 	} else if (key == GLFW_KEY_UP && action != GLFW_RELEASE) {
-	} else if (key == GLFW_KEY_C && action != GLFW_RELEASE) {
-		// FIXME: FPS mode on/off
+    } else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+        FPSMode = !FPSMode;
+        g_camera.reset();
 	}
 	if (!g_menger)
 		return ; // 0-4 only available in Menger mode.
@@ -349,7 +349,10 @@ int main(int argc, char* argv[])
 			g_menger->generate_geometry(obj_vertices, obj_faces);
 			g_menger->set_clean();
 		}
-        g_camera.computeMatricesFromInputs(window, init_x, init_y);
+        if(FPSMode)
+            g_camera.FPSComputeMatricesFromInputs(window, init_x, init_y);
+        else
+            g_camera.OrbitComputeMatricesFromInputs(window, init_x, init_y);
         // Compute the projection matrix.
         glm::mat4 projection_matrix = g_camera.get_projection_matrix();
 
