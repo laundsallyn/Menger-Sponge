@@ -115,6 +115,14 @@ void create_subcubes(Cube* cubeptr, std::queue<Cube>& cube_list) {
 					// TODO: Find a better way...
 					continue;
 				}
+
+				// TODO: comment out
+				// DEBUG: cubes sharing verts?
+				if (count == 2 || count == 4 || count == 6 || count == 8
+					|| (count > 9 && count <= 18) ) {
+					continue;
+				}
+
 				glm::vec4 submin = min + glm::vec4(x_off*k, y_off*j, z_off*i, 0.0f);
 				glm::vec4 submax = min + glm::vec4(x_off*(k+1), y_off*(j+1), z_off*(i+1), 0.0f);
 				Cube small = Cube(submin, submax, true);
@@ -149,7 +157,9 @@ void Menger::CreateMenger(std::vector<glm::vec4>&  obj_vertices,
 	Cube *cubeptr;
 	while (!cube_list.empty()) {
 		cubeptr = &(cube_list.front());
+		std::cout << "vertex_count" << vertex_count << std::endl;
 		cubeptr->generate_cube(obj_vertices, obj_faces, vertex_count);
+		std::cout << "objvert size" << obj_vertices.size() << std::endl;
 		vertex_count += 8;
 		cube_list.pop();
 	}
