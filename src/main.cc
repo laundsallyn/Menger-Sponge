@@ -51,8 +51,8 @@ flat out vec4 normal;
 out vec4 light_direction;
 void main()
 {
-	int n = 0;
-	normal = vec4(0.0, 0.0, 1.0f, 0.0);
+    normal = vec4(normalize(cross(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz, gl_in[2].gl_Position.xyz -gl_in[0].gl_Position.xyz)),0) ;
+    int n = 0;
 	for (n = 0; n < gl_in.length(); n++) {
 		light_direction = vs_light_direction[n];
 		gl_Position = projection * gl_in[n].gl_Position;
@@ -67,12 +67,34 @@ R"zzz(#version 330 core
 flat in vec4 normal;
 in vec4 light_direction;
 out vec4 fragment_color;
+
+struct NormalColor
+{
+  vec3 normal;
+  vec4 color;
+};
+
 void main()
 {
-	vec4 color = vec4(1.0, 0.0, 0.0, 1.0);
-	float dot_nl = dot(normalize(light_direction), normalize(normal));
-	dot_nl = clamp(dot_nl, 0.0, 1.0);
-	fragment_color = clamp(dot_nl * color, 0.0, 1.0);
+    NormalColor colors[6];
+
+    colors[0] = NormalColor(vec3(1,0,0), vec4(1.0f,0.0,0.0,1.0f));
+    colors[1] = NormalColor(vec3(0,1,0), vec4(0.f,1.f,0.f,1.f));
+    colors[2] = NormalColor(vec3(0,0,1), vec4(0.f,0.f,1.f,1.f));
+    colors[3] = NormalColor(vec3(-1,0,0), vec4(1.0f,0.35f,0.35f,1.f));
+    colors[4] = NormalColor(vec3(0,-1,0), vec4(0.35f,1.f,0.35f,1.f));
+    colors[5] = NormalColor(vec3(0,0,-1), vec4(0.35f,0.35f,1.f,1.f));
+    vec4 color = vec4(.5f,0.5f,0.5f,1.f);
+    for(int i = 0; i < 6; ++i){
+        if(normal[0] - colors[i].normal[0] < 0.01 && normal[1] - colors[i].normal[1] < 0.01 && normal[2] - colors[i].normal[2] < 0.01){
+            color = colors[i].color;
+            break;
+        }
+    }
+//	float dot_nl = dot(normalize(light_direction), normalize(normal));
+//	dot_nl = clamp(dot_nl, 0.0, 1.0);
+//	fragment_color = clamp(dot_nl * color, 0.0, 1.0);
+    fragment_color = color;
 }
 )zzz";
 
@@ -227,7 +249,7 @@ int main(int argc, char* argv[])
     //CreateTriangle(obj_vertices, obj_faces);
 
 
-	g_menger->set_nesting_level(1);
+    g_menger->set_nesting_level(4);
 	g_menger->generate_geometry(obj_vertices, obj_faces);
 	g_menger->set_clean();
 
@@ -320,6 +342,7 @@ int main(int argc, char* argv[])
 	CHECK_GL_ERROR(light_position_location =
 			glGetUniformLocation(program_id, "light_position"));
 
+
 	// Setup fragment shader for the floor
 	GLuint floor_fragment_shader_id = 0;
 	const char* floor_fragment_source_pointer = floor_fragment_shader;
@@ -347,13 +370,15 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDepthFunc(GL_LESS);
 
-		// Switch to the Geometry VAO.
-		CHECK_GL_ERROR(glBindVertexArray(g_array_objects[kGeometryVao]));
 
 		if (g_menger && g_menger->is_dirty()) {
 			g_menger->generate_geometry(obj_vertices, obj_faces);
 			g_menger->set_clean();
 		}
+
+        // Switch to the Geometry VAO.
+        CHECK_GL_ERROR(glBindVertexArray(g_array_objects[kGeometryVao]));
+
         if(FPSMode)
             g_camera.FPSComputeMatricesFromInputs(window, init_x, init_y);
         else
@@ -368,7 +393,7 @@ int main(int argc, char* argv[])
         glm::mat4 mvp = projection_matrix * view_matrix * model_matrix;
 
 		// Send vertices to the GPU.
-		CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER,
+        CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER,
 		                            g_buffer_objects[kGeometryVao][kVertexBuffer]));
 		CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
 		                            sizeof(float) * obj_vertices.size() * 4,
