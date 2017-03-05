@@ -2,6 +2,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 using namespace std;
 
+// from glm::lookat at glm/gtc/matrix_transform.ini
 glm::mat4 computeLookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up){
     glm::vec3 const f(glm::normalize(center - eye));
     glm::vec3 const s(glm::normalize(cross(f, up)));
@@ -135,8 +136,7 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
             verticalAngle += mouseSpeed * deltaY;
             init_x = xpos;
             init_y = ypos;
-            cout<<"horizontalAngle = "<< horizontalAngle <<endl;
-            cout<<"verticalAngle = "<< verticalAngle <<endl;
+
 
         }else if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
             if (init_y - ypos < 0.0){
@@ -178,23 +178,23 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
             radius += deltaTime * speed;
         }
-        /*
+
         // Strafe right
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
-            position += right * deltaTime * speed;
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+            objectCenter += right * deltaTime * speed;
         }
         // Strafe left
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
-            position -= right * deltaTime * speed;
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+            objectCenter -= right * deltaTime * speed;
         }
-        */
+
 
         glm::vec3 objectOffset(radius*cos(horizontalAngle), verticalAngle, radius* sin(horizontalAngle));
 
         position = objectCenter + objectOffset;
 
         float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
-
+        cout << glm::to_string(objectCenter) <<endl;
         ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
         // Camera matrix
         ViewMatrix = computeLookAt(
