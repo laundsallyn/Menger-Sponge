@@ -150,6 +150,10 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
             init_y = ypos;
         }
 
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+            verticalAngle += mouseSpeed *10;
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+            verticalAngle -= mouseSpeed *10;
 
         // Direction : Spherical coordinates to Cartesian coordinates conversion
         glm::vec3 direction(
@@ -187,6 +191,11 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
             objectCenter -= right * deltaTime * speed;
         }
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+            objectCenter += up * deltaTime * speed;
+
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+            objectCenter -= up * deltaTime * speed;
 
 
         glm::vec3 objectOffset(radius*cos(horizontalAngle), verticalAngle, radius* sin(horizontalAngle));
