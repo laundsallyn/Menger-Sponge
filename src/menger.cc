@@ -55,6 +55,9 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	 * associated with that subcube. 
 	 */
 
+	 obj_vertices.clear();
+	 obj_faces.clear();
+
 	float min_bound = -0.5; // Bounds of whole cube is -0.5 to 0.5
 	float max_bound = 0.5;
 	std::queue<Cube> cube_list; //FIFO queue, push cubes as wanted
@@ -150,21 +153,22 @@ void Menger::CreateMenger(std::vector<glm::vec4>&  obj_vertices,
               std::vector<glm::uvec3>& obj_faces,
               std::queue<Cube>& cube_list) const
 {
-	std::cout << "CreateMenger(): # of cubes = " << cube_list.size() << std::endl;
+	// std::cout << "CreateMenger(): # of cubes = " << cube_list.size() << std::endl;
 
 	Cube *cubeptr;
 	while (!cube_list.empty()) {
 		cubeptr = &(cube_list.front());
 		cubeptr->generate_cube(obj_vertices, obj_faces);
-		std::cout << "obj_vert size" << obj_vertices.size() << std::endl;
+		// std::cout << "obj_vert size" << obj_vertices.size() << std::endl;
 		cube_list.pop();
 	}
+	std::cout << "CreateMenger(): # of vertices = " << obj_vertices.size() << std::endl;
 }
 
 Cube::Cube(glm::vec4 min, glm::vec4 max, bool isFull)
 			:min_bound(min), max_bound(max) {
 	// std::cout << "Cube(vec4,vec4,b) constructor" << std::endl;
-	print();
+	// print();
 }
 
 void Cube::generate_cube(std::vector<glm::vec4>& obj_vertices,

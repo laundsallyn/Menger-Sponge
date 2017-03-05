@@ -155,7 +155,9 @@ KeyCallback(GLFWwindow* window,
 	} else if (key == GLFW_KEY_2 && action != GLFW_RELEASE) {
 		g_menger->set_nesting_level(2);
 	} else if (key == GLFW_KEY_3 && action != GLFW_RELEASE) {
+		g_menger->set_nesting_level(3);
 	} else if (key == GLFW_KEY_4 && action != GLFW_RELEASE) {
+		g_menger->set_nesting_level(4);
 	}
 }
 
@@ -225,7 +227,7 @@ int main(int argc, char* argv[])
     //CreateTriangle(obj_vertices, obj_faces);
 
 
-	g_menger->set_nesting_level(2);
+	g_menger->set_nesting_level(1);
 	g_menger->generate_geometry(obj_vertices, obj_faces);
 	g_menger->set_clean();
 
