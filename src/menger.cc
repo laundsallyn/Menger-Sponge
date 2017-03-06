@@ -197,10 +197,28 @@ void Cube::generate_cube(std::vector<glm::vec4>& obj_vertices,
 	obj_vertices.push_back(glm::vec4(min[0], max[1], max[2], 1.0f));
 
 	// face -Z
+	std::cout << "-Z" << std::endl;
+	glm::dvec3 v0(min[0], min[1], min[2]);
+	glm::dvec3 v1(max[0], min[1], min[2]);
+	glm::dvec3 v2(min[0], max[1], min[2]);
+	glm::dvec3 v3(max[0], max[1], min[2]);
+	glm::dvec3 face1 = glm::cross(v2 - v0, v1 - v0);
+	glm::dvec3 face2 = glm::cross(v2 - v1, v3 - v1);
+	std::cout << "  " << glm::to_string(face1) << std::endl;
+	std::cout << "  " << glm::to_string(face2) << std::endl;
 	obj_faces.push_back(glm::uvec3(voff + 0, voff + 1, voff + 2));
-	obj_faces.push_back(glm::uvec3(voff + 1, voff + 2, voff + 3));
+	obj_faces.push_back(glm::uvec3(voff + 1, voff + 3, voff + 2));
 
 	// face -X
+	std::cout << "-X" << std::endl;
+	v0 = glm::dvec3(max[0], min[1], min[2]);
+	v1 = glm::dvec3(max[0], min[1], max[2]);
+	v2 = glm::dvec3(max[0], max[1], min[2]);
+	v3 = glm::dvec3(max[0], max[1], max[2]);
+	face1 = glm::cross(v2 - v0, v1 - v0);
+	face2 = glm::cross(v2 - v1, v3 - v1);
+	std::cout << "  " << glm::to_string(face1) << std::endl;
+	std::cout << "  " << glm::to_string(face2) << std::endl;
 	obj_faces.push_back(glm::uvec3(voff + 1, voff + 4, voff + 3));
 	obj_faces.push_back(glm::uvec3(voff + 4, voff + 6, voff + 3));
 
