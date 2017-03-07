@@ -136,15 +136,13 @@ void create_subcubes(Cube* cubeptr, std::queue<Cube>& cube_list) {
 }
 
 void Menger::create_floor(std::vector<glm::vec4> &vertices, std::vector<glm::uvec3> &faces){
-    vertices.push_back(glm::vec4 ( 0.f, -2.0f,  0.f, 1.0f));
-    vertices.push_back(glm::vec4 ( 1.f, -2.0f,  0.f, 0.0f));
-    vertices.push_back(glm::vec4 ( 0.f, -2.0f,  1.f, 0.0f));
-    vertices.push_back(glm::vec4 (-1.f, -2.0f,  0.f, 0.0f));
-    vertices.push_back(glm::vec4 ( 0.f, -2.0f, -1.f, 0.0f));
+    vertices.push_back(glm::vec4 ( -20.0f, -2.0f,  -20.0f, 1.0f));
+    vertices.push_back(glm::vec4 ( 20.0f, -2.0f,  -20.0f, 1.0f));
+    vertices.push_back(glm::vec4 ( -20.0f, -2.0f,  20.0f, 1.0f));
+    vertices.push_back(glm::vec4 (20.0f, -2.0f,  20.f, 1.0f));
     faces.push_back(glm::uvec3(0,1,2));
-    faces.push_back(glm::uvec3(0,2,3));
-    faces.push_back(glm::uvec3(0,3,4));
-    faces.push_back(glm::uvec3(0,4,1));
+    faces.push_back(glm::uvec3(3,2,1));
+
 }
 
 

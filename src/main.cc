@@ -36,8 +36,8 @@ uniform vec4 light_position;
 out vec4 vs_light_direction;
 void main()
 {
-	gl_Position = view * vertex_position;
-	vs_light_direction = -gl_Position + view * light_position;
+    gl_Position = vertex_position;
+    vs_light_direction = -(view * gl_Position)  + view * light_position;
 }
 )zzz";
 
@@ -46,6 +46,7 @@ R"zzz(#version 330 core
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 uniform mat4 projection;
+uniform mat4 view;
 in vec4 vs_light_direction[];
 flat out vec4 normal;
 out vec4 light_direction;
@@ -55,7 +56,7 @@ void main()
     int n = 0;
 	for (n = 0; n < gl_in.length(); n++) {
 		light_direction = vs_light_direction[n];
-        gl_Position = projection * gl_in[n].gl_Position;
+        gl_Position = projection * view * gl_in[n].gl_Position;
 		EmitVertex();
     }
 	EndPrimitive();
@@ -76,26 +77,14 @@ struct NormalColor
 
 void main()
 {
-//    NormalColor colors[6];
 
-//    colors[0] = NormalColor(vec3(1,0,0), vec4(1.0f,0.0,0.0,1.0f));
-//    colors[1] = NormalColor(vec3(0,1,0), vec4(0.f,1.f,0.f,1.f));
-//    colors[2] = NormalColor(vec3(0,0,1), vec4(0.f,0.f,1.f,1.f));
-//    colors[3] = NormalColor(vec3(-1,0,0), vec4(.7f,0.35f,0.35f,1.f));
-//    colors[4] = NormalColor(vec3(0,-1,0), vec4(0.35f,.7f,0.35f,1.f));
-//    colors[5] = NormalColor(vec3(0,0,-1), vec4(0.35f,0.35f,.7f,1.f));
    vec4 color = vec4(.5f,0.5f,0.5f,1.f);
-//    for(int i = 0; i < 6; ++i){
-//        if(colors[i].normal == normal.xyz){
-//            color = colors[i].color;
-//            break;
-//        }
-//    }
+
     color = vec4 (abs(normal.x),abs(normal.y),abs(normal.z), 0.f);
     float dot_nl = dot(normalize(light_direction), normalize(normal));
     dot_nl = clamp(dot_nl, 0.0, 1.0);
-//    fragment_color = clamp(dot_nl * color, 0.0, 1.0);
-    fragment_color = color;
+    fragment_color = clamp(dot_nl * color, 0.0, 1.0);
+    //fragment_color = color;
 
 }
 )zzz";
