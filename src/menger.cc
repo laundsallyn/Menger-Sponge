@@ -135,6 +135,19 @@ void create_subcubes(Cube* cubeptr, std::queue<Cube>& cube_list) {
 	}
 }
 
+void Menger::create_floor(std::vector<glm::vec4> &vertices, std::vector<glm::uvec3> &faces){
+    vertices.push_back(glm::vec4 (0.f,0.f,0.f,1.f));
+    vertices.push_back(glm::vec4 (1.f,0.f,0.f,0.f));
+    vertices.push_back(glm::vec4 (0.f,0.f,1.f,0.f));
+    vertices.push_back(glm::vec4 (-1.f,0.f,0.f,0.f));
+    vertices.push_back(glm::vec4 (0.f,0.f,-1.f,0.f));
+    faces.push_back(glm::uvec3(0,1,2));
+    faces.push_back(glm::uvec3(0,2,3));
+    faces.push_back(glm::uvec3(0,3,4));
+    faces.push_back(glm::uvec3(0,4,1));
+}
+
+
 /** TODO: 20 points
  * Implement CreateMenger to append the vertices and triangles of 
  * subcubes that should be drawn. This should properly position and 
@@ -238,6 +251,8 @@ void Cube::generate_cube(std::vector<glm::vec4>& obj_vertices,
 	obj_faces.push_back(glm::uvec3(voff + 2, voff + 3, voff + 7));
 	obj_faces.push_back(glm::uvec3(voff + 3, voff + 6, voff + 7));
 }
+
+
 
 void Cube::print() {
 	std::cout << "Cube print!" << std::endl;

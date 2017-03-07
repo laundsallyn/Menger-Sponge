@@ -51,13 +51,13 @@ flat out vec4 normal;
 out vec4 light_direction;
 void main()
 {
-    normal = vec4(normalize(cross(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz, gl_in[2].gl_Position.xyz -gl_in[0].gl_Position.xyz)),0) ;
+    normal = vec4(normalize(cross(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz, gl_in[2].gl_Position.xyz -gl_in[0].gl_Position.xyz)),1) ;
     int n = 0;
 	for (n = 0; n < gl_in.length(); n++) {
 		light_direction = vs_light_direction[n];
-		gl_Position = projection * gl_in[n].gl_Position;
+        gl_Position = projection * gl_in[n].gl_Position;
 		EmitVertex();
-	}
+    }
 	EndPrimitive();
 }
 )zzz";
@@ -76,25 +76,26 @@ struct NormalColor
 
 void main()
 {
-    NormalColor colors[6];
+//    NormalColor colors[6];
 
-    colors[0] = NormalColor(vec3(1,0,0), vec4(1.0f,0.0,0.0,1.0f));
-    colors[1] = NormalColor(vec3(0,1,0), vec4(0.f,1.f,0.f,1.f));
-    colors[2] = NormalColor(vec3(0,0,1), vec4(0.f,0.f,1.f,1.f));
-    colors[3] = NormalColor(vec3(-1,0,0), vec4(1.0f,0.35f,0.35f,1.f));
-    colors[4] = NormalColor(vec3(0,-1,0), vec4(0.35f,1.f,0.35f,1.f));
-    colors[5] = NormalColor(vec3(0,0,-1), vec4(0.35f,0.35f,1.f,1.f));
-    vec4 color = vec4(.5f,0.5f,0.5f,1.f);
-    for(int i = 0; i < 6; ++i){
-        if(normal[0] - colors[i].normal[0] < 0.01 && normal[1] - colors[i].normal[1] < 0.01 && normal[2] - colors[i].normal[2] < 0.01){
-            color = colors[i].color;
-            break;
-        }
-    }
-//	float dot_nl = dot(normalize(light_direction), normalize(normal));
-//	dot_nl = clamp(dot_nl, 0.0, 1.0);
-//	fragment_color = clamp(dot_nl * color, 0.0, 1.0);
-    fragment_color = color;
+//    colors[0] = NormalColor(vec3(1,0,0), vec4(1.0f,0.0,0.0,1.0f));
+//    colors[1] = NormalColor(vec3(0,1,0), vec4(0.f,1.f,0.f,1.f));
+//    colors[2] = NormalColor(vec3(0,0,1), vec4(0.f,0.f,1.f,1.f));
+//    colors[3] = NormalColor(vec3(-1,0,0), vec4(.7f,0.35f,0.35f,1.f));
+//    colors[4] = NormalColor(vec3(0,-1,0), vec4(0.35f,.7f,0.35f,1.f));
+//    colors[5] = NormalColor(vec3(0,0,-1), vec4(0.35f,0.35f,.7f,1.f));
+   vec4 color = vec4(.5f,0.5f,0.5f,1.f);
+//    for(int i = 0; i < 6; ++i){
+//        if(colors[i].normal == normal.xyz){
+//            color = colors[i].color;
+//            break;
+//        }
+//    }
+    color = vec4 (abs(normal.x),abs(normal.y),abs(normal.z), 0.f);
+    float dot_nl = dot(normalize(light_direction), normalize(normal));
+    dot_nl = clamp(dot_nl, 0.0, 1.0);
+    fragment_color = clamp(dot_nl * color, 0.0, 1.0);
+//    fragment_color = color;
 }
 )zzz";
 
@@ -107,19 +108,9 @@ in vec4 world_position;
 out vec4 fragment_color;
 void main()
 {
-	fragment_color = vec4(0.0, 0.0, 0.0, 1.0);
+    fragment_color = vec4(0.5, 0.5, 0.6, 1.0);
 }
 )zzz";
-
-void
-CreateTriangle(std::vector<glm::vec4>& vertices,
-        std::vector<glm::uvec3>& indices)
-{
-    vertices.push_back(glm::vec4(-10.5f, -10.5f, -10.5f, 1.0f));
-    vertices.push_back(glm::vec4(10.5f, -1.5f, -10.5f, 1.0f));
-    vertices.push_back(glm::vec4(10.0f, 10.5f, -10.5f, 1.0f));
-	indices.push_back(glm::uvec3(0, 1, 2));
-}
 
 // FIXME: Save geometry to OBJ file
 void
@@ -245,6 +236,8 @@ int main(int argc, char* argv[])
 	std::vector<glm::vec4> obj_vertices;
 	std::vector<glm::uvec3> obj_faces;
         
+    std::vector<glm::vec4> floor_vertices;
+    std::vector<glm::uvec3> floor_faces;
     //FIXME: Create the geometry from a Menger object.
     //CreateTriangle(obj_vertices, obj_faces);
 
@@ -252,6 +245,8 @@ int main(int argc, char* argv[])
     g_menger->set_nesting_level(4);
 	g_menger->generate_geometry(obj_vertices, obj_faces);
 	g_menger->set_clean();
+    g_menger->create_floor(floor_vertices,floor_faces);
+
 
 	glm::vec4 min_bounds = glm::vec4(std::numeric_limits<float>::max());
 	glm::vec4 max_bounds = glm::vec4(-std::numeric_limits<float>::max());
@@ -262,11 +257,24 @@ int main(int argc, char* argv[])
 	std::cout << "min_bounds = " << glm::to_string(min_bounds) << "\n";
 	std::cout << "max_bounds = " << glm::to_string(max_bounds) << "\n";
 
-	// Setup our VAO array.
+    // Setup our VAO array.
 	CHECK_GL_ERROR(glGenVertexArrays(kNumVaos, &g_array_objects[0]));
 
 	// Switch to the VAO for Geometry.
 	CHECK_GL_ERROR(glBindVertexArray(g_array_objects[kGeometryVao]));
+
+    // create buffer for the floor
+    CHECK_GL_ERROR(glGenBuffers(kNumVbos,&g_buffer_objects[kGeometryVao][1]));
+    CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, g_buffer_objects[kGeometryVao][1]));
+    CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
+                       sizeof(float) * floor_vertices.size()*4, nullptr,
+                       GL_STATIC_DRAW));
+    CHECK_GL_ERROR(glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0));
+    CHECK_GL_ERROR(glEnableVertexAttribArray(1));
+
+
+
+
 
 	// Generate buffer objects
 	CHECK_GL_ERROR(glGenBuffers(kNumVbos, &g_buffer_objects[kGeometryVao][0]));

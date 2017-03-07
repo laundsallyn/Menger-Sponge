@@ -20,6 +20,7 @@ protected:
 	glm::vec4 max_bound;
 };
 
+
 class Menger {
 public:
 	Menger();
@@ -29,6 +30,7 @@ public:
 	void set_clean();
 	void generate_geometry(std::vector<glm::vec4>& obj_vertices,
 	                       std::vector<glm::uvec3>& obj_faces) const;
+    void create_floor(std::vector<glm::vec4>&,std::vector<glm::uvec3>&);
 private:
 	void CreateMenger(std::vector<glm::vec4>&  obj_vertices, 
               		  std::vector<glm::uvec3>& obj_faces, 

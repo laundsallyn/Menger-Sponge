@@ -149,7 +149,14 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
             init_x = xpos;
             init_y = ypos;
         }
-
+        // Strafe right
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+            horizontalAngle += deltaTime * speed;
+        }
+        // Strafe left
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+            horizontalAngle -= deltaTime * speed;
+        }
         if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
             verticalAngle += mouseSpeed *10;
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -175,22 +182,14 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
         // Move forward
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
             radius -= deltaTime * speed;
-            if (radius < 0) // don't want radius to be negative
-                radius = 0;
+
         }
         // Move backward
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
             radius += deltaTime * speed;
         }
 
-        // Strafe right
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-            objectCenter += right * deltaTime * speed;
-        }
-        // Strafe left
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-            objectCenter -= right * deltaTime * speed;
-        }
+
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
             objectCenter += up * deltaTime * speed;
 
