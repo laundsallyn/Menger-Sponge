@@ -109,7 +109,7 @@ in vec4 world_position;
 out vec4 fragment_color;
 void main()
 {
-    fragment_color = vec4(0.5, 0.5, 0.6, 1.0);
+    fragment_color = vec4(1.0, 1.0, 1.0, 1.0);
 }
 )zzz";
 
@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
     CHECK_GL_ERROR(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_buffer_objects[kFloorVao][kIndexBuffer]));
 	CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
 				sizeof(uint32_t) * floor_faces.size() * 3,
-				&obj_faces[0], GL_STATIC_DRAW));
+				&floor_faces[0], GL_STATIC_DRAW));
 
 	/*
  	 * By far, the geometry is loaded into g_buffer_objects[kGeometryVao][*].
@@ -418,7 +418,7 @@ int main(int argc, char* argv[])
         glm::mat4 model_matrix = glm::mat4(1.0f);
         glm::mat4 mvp = projection_matrix * view_matrix * model_matrix;
 
-		// Send vertices to the GPU.
+		// Send GEOMETRY vertices to the GPU.
         CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER,
 		                            g_buffer_objects[kGeometryVao][kVertexBuffer]));
 		CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
@@ -426,6 +426,7 @@ int main(int argc, char* argv[])
 		                            &obj_vertices[0], GL_STATIC_DRAW));
 
 		CHECK_GL_ERROR(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_buffer_objects[kGeometryVao][kIndexBuffer]));
+		CHECK_GL_ERROR(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_buffer_objects[kFloorVao][kIndexBuffer]));
 		CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
 					sizeof(uint32_t) * obj_faces.size() * 3,
 					&obj_faces[0], GL_STATIC_DRAW));
@@ -451,7 +452,19 @@ int main(int argc, char* argv[])
 		// 	4. Call glDrawElements, since input geometry is
 		// 	indicated by VAO.
 
+		// switch to FLOOR VAO.
 		CHECK_GL_ERROR(glBindVertexArray(g_array_objects[kFloorVao]));
+		CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER,
+									g_buffer_objects[kFloorVao][kVertexBuffer]));
+		CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
+									sizeof(float) * floor_vertices.size() * 4,
+									&floor_vertices[0], GL_STATIC_DRAW));
+
+		CHECK_GL_ERROR(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_buffer_objects[kFloorVao][kIndexBuffer]));
+		CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+					sizeof(uint32_t) * floor_faces.size() * 3,
+					&floor_faces[0], GL_STATIC_DRAW));
+
 		CHECK_GL_ERROR(glUseProgram(floor_program_id)); //may be error? delete old program?
 
 		CHECK_GL_ERROR(glUniformMatrix4fv(floor_projection_matrix_location, 1, GL_FALSE,
