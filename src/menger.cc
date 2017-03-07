@@ -176,6 +176,7 @@ void Menger::CreateMenger(std::vector<glm::vec4>&  obj_vertices,
 		cube_list.pop();
 	}
 	std::cout << "CreateMenger(): # of vertices = " << obj_vertices.size() << std::endl;
+	std::cout << "CreateMenger(): # of faces    = " << obj_faces.size() << std::endl;
 }
 
 Cube::Cube(glm::vec4 min, glm::vec4 max, bool isFull)
@@ -210,46 +211,68 @@ void Cube::generate_cube(std::vector<glm::vec4>& obj_vertices,
 	obj_vertices.push_back(glm::vec4(min[0], max[1], max[2], 1.0f));
 
 	// face -Z
-	std::cout << "-Z" << std::endl;
-	glm::dvec3 v0(min[0], min[1], min[2]);
-	glm::dvec3 v1(max[0], min[1], min[2]);
-	glm::dvec3 v2(min[0], max[1], min[2]);
-	glm::dvec3 v3(max[0], max[1], min[2]);
-	glm::dvec3 face1 = glm::cross(v2 - v0, v1 - v0);
-	glm::dvec3 face2 = glm::cross(v2 - v1, v3 - v1);
-	std::cout << "  " << glm::to_string(face1) << std::endl;
-	std::cout << "  " << glm::to_string(face2) << std::endl;
+	// std::cout << "-Z" << std::endl;
+	// glm::dvec3 v0(obj_vertices[voff + 0]);
+	// glm::dvec3 v1(obj_vertices[voff + 1]);
+	// glm::dvec3 v2(obj_vertices[voff + 2]);
+	// glm::dvec3 v3(obj_vertices[voff + 3]);
+	// glm::dvec3 v4(obj_vertices[voff + 4]);
+	// glm::dvec3 v5(obj_vertices[voff + 5]);
+	// glm::dvec3 v6(obj_vertices[voff + 6]);
+	// glm::dvec3 v7(obj_vertices[voff + 7]);
+
+	// face -Z
+	// glm::dvec3 face1 = glm::cross(v1 - v3, v2 - v3);
+	// glm::dvec3 face2 = glm::cross(v2 - v0, v1 - v0);
+	// std::cout << "  " << glm::to_string(face1) << std::endl;
+	// std::cout << "  " << glm::to_string(face2) << std::endl;
 	obj_faces.push_back(glm::uvec3(voff + 0, voff + 1, voff + 2));
-	obj_faces.push_back(glm::uvec3(voff + 1, voff + 3, voff + 2));
+	obj_faces.push_back(glm::uvec3(voff + 3, voff + 2, voff + 1));
 
 	// face -X
-	std::cout << "-X" << std::endl;
-	v0 = glm::dvec3(max[0], min[1], min[2]);
-	v1 = glm::dvec3(max[0], min[1], max[2]);
-	v2 = glm::dvec3(max[0], max[1], min[2]);
-	v3 = glm::dvec3(max[0], max[1], max[2]);
-	face1 = glm::cross(v2 - v0, v1 - v0);
-	face2 = glm::cross(v2 - v1, v3 - v1);
-	std::cout << "  " << glm::to_string(face1) << std::endl;
-	std::cout << "  " << glm::to_string(face2) << std::endl;
+	// std::cout << "-X" << std::endl;
+	// face1 = glm::cross(v4 - v1, v3 - v1);
+	// face2 = glm::cross(v3 - v6, v4 - v6);
+	// std::cout << "  " << glm::to_string(face1) << std::endl;
+	// std::cout << "  " << glm::to_string(face2) << std::endl;
 	obj_faces.push_back(glm::uvec3(voff + 1, voff + 4, voff + 3));
-	obj_faces.push_back(glm::uvec3(voff + 4, voff + 6, voff + 3));
+	obj_faces.push_back(glm::uvec3(voff + 6, voff + 3, voff + 4));
 
 	// face +Z
-	obj_faces.push_back(glm::uvec3(voff + 4, voff + 5, voff + 6));
-	obj_faces.push_back(glm::uvec3(voff + 5, voff + 7, voff + 6));
+	// std::cout << "+Z" << std::endl;
+	// face1 = glm::cross(v6 - v4, v5 - v4);
+	// face2 = glm::cross(v5 - v7, v6 - v7);
+	// std::cout << "  " << glm::to_string(face1) << std::endl;
+	// std::cout << "  " << glm::to_string(face2) << std::endl;
+	obj_faces.push_back(glm::uvec3(voff + 5, voff + 4, voff + 7));
+	obj_faces.push_back(glm::uvec3(voff + 6, voff + 7, voff + 4));
 
 	// face +X
-	obj_faces.push_back(glm::uvec3(voff + 5, voff + 0, voff + 7));
-	obj_faces.push_back(glm::uvec3(voff + 0, voff + 2, voff + 7));
+	// std::cout << "+X" << std::endl;
+	// face1 = glm::cross(v5 - v0, v2 - v0);
+	// face2 = glm::cross(v2 - v0, v0 - v7);
+	// std::cout << "  " << glm::to_string(face1) << std::endl;
+	// std::cout << "  " << glm::to_string(face2) << std::endl;
+	obj_faces.push_back(glm::uvec3(voff + 0, voff + 5, voff + 2));
+	obj_faces.push_back(glm::uvec3(voff + 7, voff + 2, voff + 5));
 
 	// face -Y
-	obj_faces.push_back(glm::uvec3(voff + 5, voff + 4, voff + 0));
-	obj_faces.push_back(glm::uvec3(voff + 4, voff + 1, voff + 0));
+	// std::cout << "-Y" << std::endl;
+	// face1 = glm::cross(v2 - v0, v1 - v0);
+	// face2 = glm::cross(v2 - v1, v3 - v1);
+	// std::cout << "  " << glm::to_string(face1) << std::endl;
+	// std::cout << "  " << glm::to_string(face2) << std::endl;
+	obj_faces.push_back(glm::uvec3(voff + 0, voff + 1, voff + 5));
+	obj_faces.push_back(glm::uvec3(voff + 4, voff + 5, voff + 1));
 
 	// face +Y
+	// std::cout << "+Y" << std::endl;
+	// face1 = glm::cross(v2 - v0, v1 - v0);
+	// face2 = glm::cross(v2 - v1, v3 - v1);
+	// std::cout << "  " << glm::to_string(face1) << std::endl;
+	// std::cout << "  " << glm::to_string(face2) << std::endl;
 	obj_faces.push_back(glm::uvec3(voff + 2, voff + 3, voff + 7));
-	obj_faces.push_back(glm::uvec3(voff + 3, voff + 6, voff + 7));
+	obj_faces.push_back(glm::uvec3(voff + 6, voff + 7, voff + 3));
 }
 
 
