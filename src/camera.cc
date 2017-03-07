@@ -48,17 +48,8 @@ void Camera::FPSComputeMatricesFromInputs(GLFWwindow *window, double &init_x, do
         init_x = xpos;
         init_y = ypos;
 
-    }else if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
-        if (init_y - ypos < 0.0){
-            camera_distance_ -= deltaTime * speed;
-            position.z += deltaTime * speed;
-        }else if (init_y - ypos > 0.0){
-            camera_distance_ += deltaTime * speed;
-            position.z -= deltaTime * speed;
-        }
-        init_x = xpos;
-        init_y = ypos;
     }
+
 
 
     // Direction : Spherical coordinates to Cartesian coordinates conversion
@@ -77,6 +68,19 @@ void Camera::FPSComputeMatricesFromInputs(GLFWwindow *window, double &init_x, do
 
     // Up vector
     glm::vec3 up = glm::cross(right, direction);
+
+
+    if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
+        if (init_y - ypos < 0.0){
+            camera_distance_ -= deltaTime * speed;
+            position += direction * deltaTime * speed;
+        }else if (init_y - ypos > 0.0){
+            camera_distance_ += deltaTime * speed;
+            position -= direction * deltaTime * speed;
+        }
+        init_x = xpos;
+        init_y = ypos;
+    }
 
     // Move forward
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
@@ -140,10 +144,10 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
 
         }else if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
             if (init_y - ypos < 0.0){
-                camera_distance_ -= deltaTime * speed;
+                radius -= deltaTime * speed;
                 position.z += deltaTime * speed;
             }else if (init_y - ypos > 0.0){
-                camera_distance_ += deltaTime * speed;
+                radius += deltaTime * speed;
                 position.z -= deltaTime * speed;
             }
             init_x = xpos;

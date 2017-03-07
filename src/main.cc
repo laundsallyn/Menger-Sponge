@@ -94,8 +94,8 @@ void main()
     color = vec4 (abs(normal.x),abs(normal.y),abs(normal.z), 0.f);
     float dot_nl = dot(normalize(light_direction), normalize(normal));
     dot_nl = clamp(dot_nl, 0.0, 1.0);
-    fragment_color = clamp(dot_nl * color, 0.0, 1.0);
-//    fragment_color = color;
+//    fragment_color = clamp(dot_nl * color, 0.0, 1.0);
+    fragment_color = color;
 
 }
 )zzz";
@@ -462,6 +462,7 @@ int main(int argc, char* argv[])
 
 		CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));
 
+//        CHECK_GL_ERROR(glDisableVertexAttribArray(0));
 
 		// Poll and swap.
 		glfwPollEvents();
