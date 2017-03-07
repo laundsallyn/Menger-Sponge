@@ -91,6 +91,7 @@ void main()
             break;
         }
     }
+
 //	float dot_nl = dot(normalize(light_direction), normalize(normal));
 //	dot_nl = clamp(dot_nl, 0.0, 1.0);
 //	fragment_color = clamp(dot_nl * color, 0.0, 1.0);
@@ -249,9 +250,8 @@ int main(int argc, char* argv[])
     //CreateTriangle(obj_vertices, obj_faces);
 
 
-    g_menger->set_nesting_level(4);
+    g_menger->set_nesting_level(0);
 	g_menger->generate_geometry(obj_vertices, obj_faces);
-	g_menger->set_clean();
 
 	glm::vec4 min_bounds = glm::vec4(std::numeric_limits<float>::max());
 	glm::vec4 max_bounds = glm::vec4(-std::numeric_limits<float>::max());
@@ -399,6 +399,11 @@ int main(int argc, char* argv[])
 		                            sizeof(float) * obj_vertices.size() * 4,
 		                            &obj_vertices[0], GL_STATIC_DRAW));
 
+		CHECK_GL_ERROR(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_buffer_objects[kGeometryVao][kIndexBuffer]));
+		CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+					sizeof(uint32_t) * obj_faces.size() * 3,
+					&obj_faces[0], GL_STATIC_DRAW));
+
 		// Use our program.
 		CHECK_GL_ERROR(glUseProgram(program_id));
 
@@ -419,6 +424,18 @@ int main(int argc, char* argv[])
 		// 	3. Pass Uniforms
 		// 	4. Call glDrawElements, since input geometry is
 		// 	indicated by VAO.
+
+		// CHECK_GL_ERROR(glBindVertexArray(g_array_objects[kFloorVao]));
+		// CHECK_GL_ERROR(glUseProgram(floor_program_id)); //may be error? delete old program?
+
+		// CHECK_GL_ERROR(glUniformMatrix4fv(projection_matrix_location, 1, GL_FALSE,
+		// 			&projection_matrix[0][0]));
+		// CHECK_GL_ERROR(glUniformMatrix4fv(view_matrix_location, 1, GL_FALSE,
+		// 			&view_matrix[0][0]));
+		// CHECK_GL_ERROR(glUniform4fv(light_position_location, 1, &light_position[0]));
+
+		// CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, 0, GL_UNSIGNED_INT, 0));
+
 
 		// Poll and swap.
 		glfwPollEvents();
