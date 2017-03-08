@@ -218,3 +218,48 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
         // For the next frame, the "last time" will be "now"
         lastTime = currentTime;
 }
+
+void Camera::computeCameraMatrices() {
+    static double lastTime = glfwGetTime();
+
+    // Compute time difference between current and last frame
+    double currentTime = glfwGetTime();
+    float deltaTime = float(currentTime - lastTime);
+
+    // Direction : Spherical coordinates to Cartesian coordinates conversion
+    glm::vec3 direction(
+        cos(verticalAngle) * sin(horizontalAngle),
+        sin(verticalAngle),
+        cos(verticalAngle) * cos(horizontalAngle)
+    );
+
+    // Right vector
+    glm::vec3 right = glm::vec3(
+        sin(horizontalAngle - 3.14f / 2.0f),
+        0,
+        cos(horizontalAngle - 3.14f / 2.0f)
+    );
+
+    glm::vec3 up = glm::cross(right, direction);
+
+    glm::vec3 objectOffset(
+        radius * cos(horizontalAngle),
+        verticalAngle,
+        radius * sin(horizontalAngle)
+    );
+
+    position = objectCenter + objectOffset;
+
+    float FoV = initialFoV;
+    ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
+
+    // Camera matrix
+        ViewMatrix = computeLookAt(
+        position,           // Camera is here
+        objectCenter, // and looks here : at the same position, plus "direction"
+        up                  // Head is up (set to 0,-1,0 to look upside-down)
+    );
+
+    // For the next frame, the "last time" will be "now"
+    lastTime = currentTime;
+}

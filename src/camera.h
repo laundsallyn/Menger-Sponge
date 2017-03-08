@@ -26,6 +26,7 @@ private:
     float mouseSpeed = 0.002f;
 
     float radius = 5.0f;
+    bool isFPS = false;
 
 public:
 
@@ -37,12 +38,16 @@ public:
     }
     void FPSComputeMatricesFromInputs(GLFWwindow *, double&, double&);
     void OrbitComputeMatricesFromInputs(GLFWwindow*, double&, double&);
+    void computeCameraMatrices();
     void reset(){
          camera_distance_ = 3.0;
          horizontalAngle = 3.14f;
          verticalAngle = 0.0f;
          initialFoV = 45.0f;
     }
+    void cameraModeSwitch() {
+        isFPS = !isFPS;
+    };
 };
 
 #endif
