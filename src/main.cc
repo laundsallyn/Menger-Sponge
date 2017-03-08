@@ -118,7 +118,6 @@ ErrorCallback(int error, const char* description)
 
 std::shared_ptr<Menger> g_menger;
 Camera g_camera;
-bool FPSMode = true;
 void
 KeyCallback(GLFWwindow* window,
             int key,
@@ -144,7 +143,7 @@ KeyCallback(GLFWwindow* window,
 	} else if (key == GLFW_KEY_DOWN && action != GLFW_RELEASE) {
 	} else if (key == GLFW_KEY_UP && action != GLFW_RELEASE) {
     } else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
-        FPSMode = !FPSMode;
+        g_camera.switchCameraMode();
         g_camera.reset();
 	}
 	if (!g_menger)
@@ -394,7 +393,7 @@ int main(int argc, char* argv[])
         // Switch to the Geometry VAO.
         CHECK_GL_ERROR(glBindVertexArray(g_array_objects[kGeometryVao]));
 
-        if(FPSMode)
+        if(g_camera.isFPSMode())
             g_camera.FPSComputeMatricesFromInputs(window, init_x, init_y);
         else
             g_camera.OrbitComputeMatricesFromInputs(window, init_x, init_y);

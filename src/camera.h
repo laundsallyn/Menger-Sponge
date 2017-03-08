@@ -45,9 +45,12 @@ public:
          verticalAngle = 0.0f;
          initialFoV = 45.0f;
     }
-    void cameraModeSwitch() {
+    void switchCameraMode() {
         isFPS = !isFPS;
     };
+    bool isFPSMode() {
+        return isFPS;
+    }
 };
 
 #endif
