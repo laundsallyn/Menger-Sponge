@@ -99,7 +99,6 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
 
 void create_subcubes(Cube* cubeptr, std::queue<Cube>& cube_list) {
 	// cube_list should increase by 20 cubes
-	// std::vector<Cube> sub;
 	int c = cube_list.size();
 
 	glm::vec4 min = cubeptr->get_min_bound();
@@ -119,12 +118,6 @@ void create_subcubes(Cube* cubeptr, std::queue<Cube>& cube_list) {
 					continue;
 				}
 
-				// TODO: comment out
-				// DEBUG: cubes sharing verts?
-				// if ( count < 4 || count > 6) {
-				// 	continue;
-				// }
-
 				glm::vec4 submin = min + glm::vec4(x_off*k, y_off*j, z_off*i, 0.0f);
 				glm::vec4 submax = min + glm::vec4(x_off*(k+1), y_off*(j+1), z_off*(i+1), 0.0f);
 				Cube small = Cube(submin, submax, true);
@@ -136,10 +129,10 @@ void create_subcubes(Cube* cubeptr, std::queue<Cube>& cube_list) {
 }
 
 void Menger::create_floor(std::vector<glm::vec4> &vertices, std::vector<glm::uvec3> &faces){
-    vertices.push_back(glm::vec4 ( -20.0f, -2.0f,  -20.0f, 1.0f));
-    vertices.push_back(glm::vec4 ( 20.0f, -2.0f,  -20.0f, 1.0f));
-    vertices.push_back(glm::vec4 ( -20.0f, -2.0f,  20.0f, 1.0f));
-    vertices.push_back(glm::vec4 (20.0f, -2.0f,  20.f, 1.0f));
+    vertices.push_back(glm::vec4 ( -2000.0f, -2.0f,  -2000.0f, 1.0f));
+    vertices.push_back(glm::vec4 ( 2000.0f, -2.0f,  -2000.0f, 1.0f));
+    vertices.push_back(glm::vec4 ( -2000.0f, -2.0f,  2000.0f, 1.0f));
+    vertices.push_back(glm::vec4 (2000.0f, -2.0f,  2000.f, 1.0f));
     faces.push_back(glm::uvec3(0,1,2));
     faces.push_back(glm::uvec3(3,2,1));
 

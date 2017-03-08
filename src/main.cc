@@ -83,8 +83,8 @@ void main()
     color = vec4 (abs(normal.x),abs(normal.y),abs(normal.z), 0.f);
     float dot_nl = dot(normalize(light_direction), normalize(normal));
     dot_nl = clamp(dot_nl, 0.0, 1.0);
-    fragment_color = clamp(dot_nl * color, 0.0, 1.0);
-    //fragment_color = color;
+    // fragment_color = clamp(dot_nl * color, 0.0, 1.0);
+    fragment_color = color;
 
 }
 )zzz";
@@ -232,7 +232,7 @@ int main(int argc, char* argv[])
     //CreateTriangle(obj_vertices, obj_faces);
 
 
-    g_menger->set_nesting_level(0);
+    g_menger->set_nesting_level(1);
 	g_menger->generate_geometry(obj_vertices, obj_faces);
 	g_menger->set_clean();
     g_menger->create_floor(floor_vertices,floor_faces);
