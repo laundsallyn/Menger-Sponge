@@ -181,7 +181,7 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
             );
 
         // Up vector
-        glm::vec3 up = glm::cross(right, direction);
+//        glm::vec3 up = glm::cross(right, direction);
 
         // Move forward
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
@@ -201,8 +201,9 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
             objectCenter -= up * deltaTime * speed;
 
 
-        glm::vec3 objectOffset(radius*cos(horizontalAngle), verticalAngle, radius* sin(horizontalAngle));
-
+        glm::vec3 objectOffset(radius * cos(horizontalAngle)*sin(verticalAngle),
+                               radius * cos(verticalAngle),
+                               radius * sin(verticalAngle)* sin(horizontalAngle));
         position = objectCenter + objectOffset;
 
         float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.

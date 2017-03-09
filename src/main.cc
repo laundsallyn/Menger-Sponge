@@ -36,8 +36,10 @@ uniform vec4 light_position;
 out vec4 vs_light_direction;
 void main()
 {
+
     gl_Position = vertex_position;
-    vs_light_direction = -(view * gl_Position)  + view * light_position;
+    vs_light_direction = light_position - view * vertex_position;
+
 }
 )zzz";
 
@@ -52,10 +54,11 @@ flat out vec4 normal;
 out vec4 light_direction;
 void main()
 {
+
     normal = vec4(normalize(cross(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz, gl_in[2].gl_Position.xyz -gl_in[0].gl_Position.xyz)),1) ;
     int n = 0;
 	for (n = 0; n < gl_in.length(); n++) {
-		light_direction = vs_light_direction[n];
+        light_direction = vs_light_direction[n];
         gl_Position = projection * view * gl_in[n].gl_Position;
 		EmitVertex();
     }
@@ -78,13 +81,12 @@ struct NormalColor
 void main()
 {
 
-   vec4 color = vec4(.5f,0.5f,0.5f,1.f);
-
+    vec4 color = vec4(.5f,0.5f,0.5f,1.f);
     color = vec4 (abs(normal.x),abs(normal.y),abs(normal.z), 0.f);
     float dot_nl = dot(normalize(light_direction), normalize(normal));
     dot_nl = clamp(dot_nl, 0.0, 1.0);
-    fragment_color = clamp(dot_nl * color, 0.0, 1.0);
-    //fragment_color = color;
+   // fragment_color = clamp(dot_nl * color, 0.2, 1.0);
+    fragment_color = color;
 
 }
 )zzz";
@@ -98,6 +100,7 @@ in vec4 world_position;
 out vec4 fragment_color;
 void main()
 {
+
     fragment_color = vec4(1.0, 1.0, 1.0, 1.0);
 }
 )zzz";
@@ -374,7 +377,7 @@ int main(int argc, char* argv[])
 	CHECK_GL_ERROR(floor_light_position_location =
 			glGetUniformLocation(floor_program_id, "light_position"));
 
-	glm::vec4 light_position = glm::vec4(10.0f, 10.0f, 10.0f, 1.0f);
+    glm::vec4 light_position = glm::vec4(10.0f, 10.0f, 10.0f, 1.0f);
 	float theta = 0.0f;
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.

@@ -15,12 +15,13 @@ private:
     float deltaTime;
     glm::vec3 position ;
     // Initial horizontal angle : toward -Z
-    float horizontalAngle = 3.14f;
+    float horizontalAngle = 3.14f / 4;
     // Initial vertical angle : none
     float verticalAngle = 0.0f;
     // Initial Field of View
     float initialFoV = 45.0f;
     glm::vec3 objectCenter = glm::vec3(0.0, 0.0, 0.0);
+    glm::vec3 up = glm::vec3(0,1,0);
 
     float speed = 10.0f; // 3 units / second
     float mouseSpeed = 0.002f;
