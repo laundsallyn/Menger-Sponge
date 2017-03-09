@@ -85,7 +85,7 @@ void main()
     color = vec4 (abs(normal.x),abs(normal.y),abs(normal.z), 0.f);
     float dot_nl = dot(normalize(light_direction), normalize(normal));
     dot_nl = clamp(dot_nl, 0.0, 1.0);
-   // fragment_color = clamp(dot_nl * color, 0.2, 1.0);
+    // fragment_color = clamp(dot_nl * color, 0.0, 1.0);
     fragment_color = color;
 
 }
@@ -235,7 +235,7 @@ int main(int argc, char* argv[])
     //CreateTriangle(obj_vertices, obj_faces);
 
 
-    g_menger->set_nesting_level(0);
+    g_menger->set_nesting_level(1);
 	g_menger->generate_geometry(obj_vertices, obj_faces);
 	g_menger->set_clean();
     g_menger->create_floor(floor_vertices,floor_faces);
@@ -446,18 +446,20 @@ int main(int argc, char* argv[])
 
 		// switch to FLOOR VAO.
 		CHECK_GL_ERROR(glBindVertexArray(g_array_objects[kFloorVao]));
+		// bind Floor vertices
 		CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER,
 									g_buffer_objects[kFloorVao][kVertexBuffer]));
 		CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
 									sizeof(float) * floor_vertices.size() * 4,
 									&floor_vertices[0], GL_STATIC_DRAW));
-
+		// bind floor faces
 		CHECK_GL_ERROR(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_buffer_objects[kFloorVao][kIndexBuffer]));
 		CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
 					sizeof(uint32_t) * floor_faces.size() * 3,
 					&floor_faces[0], GL_STATIC_DRAW));
 
-		CHECK_GL_ERROR(glUseProgram(floor_program_id)); //may be error? delete old program?
+		// switch to floor shader program
+		CHECK_GL_ERROR(glUseProgram(floor_program_id));
 
 		CHECK_GL_ERROR(glUniformMatrix4fv(floor_projection_matrix_location, 1, GL_FALSE,
 					&projection_matrix[0][0]));
@@ -465,6 +467,7 @@ int main(int argc, char* argv[])
 					&view_matrix[0][0]));
 		CHECK_GL_ERROR(glUniform4fv(floor_light_position_location, 1, &light_position[0]));
 
+		// draw floor
 		CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));
 
 //        CHECK_GL_ERROR(glDisableVertexAttribArray(0));
