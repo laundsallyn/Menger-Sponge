@@ -65,6 +65,12 @@ void Camera::FPSComputeMatricesFromInputs(GLFWwindow *window, double &init_x, do
                 0,
                 cos(horizontalAngle - 3.14f / 2.0f)
                 );
+    right = glm::rotate(right,roll,direction);
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        roll +=  roll_speed;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        roll -=  roll_speed;
 
     // Up vector
     glm::vec3 up = glm::cross(right, direction);
@@ -73,10 +79,10 @@ void Camera::FPSComputeMatricesFromInputs(GLFWwindow *window, double &init_x, do
     if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
         if (init_y - ypos < 0.0){
             camera_distance_ -= deltaTime * speed;
-            position += direction * deltaTime * speed;
+            position -= direction * deltaTime * speed;
         }else if (init_y - ypos > 0.0){
             camera_distance_ += deltaTime * speed;
-            position -= direction * deltaTime * speed;
+            position += direction * deltaTime * speed;
         }
         init_x = xpos;
         init_y = ypos;
@@ -98,6 +104,11 @@ void Camera::FPSComputeMatricesFromInputs(GLFWwindow *window, double &init_x, do
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         position -= right * deltaTime * speed;
     }
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        position += up * deltaTime * speed;
+
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        position -= up * deltaTime * speed;
 
     float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
 
@@ -165,62 +176,104 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
             horizontalAngle -= deltaTime * speed;
         }
 
+    //        // Compute new orientation
+    //        time += mouseSpeed * float(1024 / 2 - xpos);
+    //        height += sin( mouseSpeed * float(768 / 2 - ypos) );
 
-        // Direction : Spherical coordinates to Cartesian coordinates conversion
-        glm::vec3 direction(
-            cos(verticalAngle) * sin(horizontalAngle),
-            sin(verticalAngle),
-            cos(verticalAngle) * cos(horizontalAngle)
-            );
+    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
+        // Compute new orientation
+        float deltaX = (float)(init_x - xpos);
+        float deltaY = (float)(init_y - ypos);
 
-        // Right vector
-        glm::vec3 right = glm::vec3(
-            sin(horizontalAngle - 3.14f / 2.0f),
-            0,
-            cos(horizontalAngle - 3.14f / 2.0f)
-            );
+        horizontalAngle += mouseSpeed * deltaX ;
+        verticalAngle += mouseSpeed * deltaY;
+        init_x = xpos;
+        init_y = ypos;
 
-//        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-//            right = glm::rotateX(right, mouseSpeed*1000);
-//        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-//            right = glm::rotateX(right, -mouseSpeed*1000);
-        // Up vector
 
-        up = glm::cross(right, direction);
+    }
 
-        // Move forward
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-            radius -= deltaTime * speed;
 
-        }
-        // Move backward
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+
+    // Direction : Spherical coordinates to Cartesian coordinates conversion
+    glm::vec3 direction(
+                cos(verticalAngle) * sin(horizontalAngle),
+                sin(verticalAngle),
+                cos(verticalAngle) * cos(horizontalAngle)
+                );
+
+    if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
+        if (init_y - ypos < 0.0){
             radius += deltaTime * speed;
+            position += direction *deltaTime * speed;
+        }else if (init_y - ypos > 0.0){
+            radius -= deltaTime * speed;
+            position -= direction * deltaTime * speed;
         }
+        init_x = xpos;
+        init_y = ypos;
+    }
+
+    // Right vector
+    glm::vec3 right = glm::vec3(
+                sin(horizontalAngle - 3.14f / 2.0f),
+                0,
+                cos(horizontalAngle - 3.14f / 2.0f)
+                );
+
+    right = glm::rotate(right,roll,direction);
+    // Strafe right
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+        objectCenter -= deltaTime * speed * right;
+    }
+    // Strafe left
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+        objectCenter += deltaTime * speed * right;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        roll +=  roll_speed;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        roll -=  roll_speed;
+
+    // Up vector
+
+    up = glm::cross(right, direction);
 
 
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-            objectCenter += up * deltaTime * speed;
+    // Move forward
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+        radius -= deltaTime * speed;
 
-        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-            objectCenter -= up * deltaTime * speed;
+    }
+    // Move backward
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+        radius += deltaTime * speed;
+    }
+    if(radius <= 0.1f)
+        radius = 0.1f;
+
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        objectCenter += up * deltaTime * speed;
+
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        objectCenter -= up * deltaTime * speed;
 
 
-//        glm::vec3 cameraP(radius * cos(horizontalAngle)*sin(verticalAngle),
-//                               radius * cos(verticalAngle),
-//                               radius * sin(verticalAngle)* sin(horizontalAngle));
-        position = objectCenter + radius*direction;
+    //        glm::vec3 cameraP(radius * cos(horizontalAngle)*sin(verticalAngle),
+    //                               radius * cos(verticalAngle),
+    //                               radius * sin(verticalAngle)* sin(horizontalAngle));
+    position = objectCenter + radius*direction;
 
-        float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
-        cout << glm::to_string(objectCenter) <<endl;
-        ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
-        // Camera matrix
-        ViewMatrix = computeLookAt(
-            position,           // Camera is here
-            objectCenter, // and looks here : at the same position, plus "direction"
-            up                  // Head is up (set to 0,-1,0 to look upside-down)
-            );
+    float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
+    cout << glm::to_string(objectCenter) <<endl;
+    ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
+    // Camera matrix
+    ViewMatrix = computeLookAt(
+                position,           // Camera is here
+                objectCenter, // and looks here : at the same position, plus "direction"
+                up                  // Head is up (set to 0,-1,0 to look upside-down)
+                );
 
-        // For the next frame, the "last time" will be "now"
-        lastTime = currentTime;
+    // For the next frame, the "last time" will be "now"
+    lastTime = currentTime;
 }
