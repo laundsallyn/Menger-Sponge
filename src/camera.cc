@@ -265,7 +265,7 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
     position = objectCenter + radius*direction;
 
     float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
-    cout << glm::to_string(objectCenter) <<endl;
+    // cout << glm::to_string(objectCenter) <<endl;
     ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
     // Camera matrix
     ViewMatrix = computeLookAt(
@@ -273,6 +273,25 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
                 objectCenter, // and looks here : at the same position, plus "direction"
                 up                  // Head is up (set to 0,-1,0 to look upside-down)
                 );
+
+    // For the next frame, the "last time" will be "now"
+    lastTime = currentTime;
+}
+
+void Camera::computeCameraMatrices() {
+    static double lastTime = glfwGetTime();
+
+    // Compute time difference between current and last frame
+    double currentTime = glfwGetTime();
+    float deltaTime = float(currentTime - lastTime);
+
+    ProjectionMatrix = glm::perspective(initialFoV, 4.0f / 3.0f, 0.1f, 100.0f);
+    // Camera matrix
+    ViewMatrix = computeLookAt(
+                eye,           // Camera is here
+                center, // and looks here : at the same position, plus "direction"
+                up                  // Head is up (set to 0,-1,0 to look upside-down)
+    );
 
     // For the next frame, the "last time" will be "now"
     lastTime = currentTime;

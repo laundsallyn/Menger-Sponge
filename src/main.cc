@@ -399,10 +399,11 @@ int main(int argc, char* argv[])
         // Switch to the Geometry VAO.
         CHECK_GL_ERROR(glBindVertexArray(g_array_objects[kGeometryVao]));
 
-        if(FPSMode)
-            g_camera.FPSComputeMatricesFromInputs(window, init_x, init_y);
-        else
-            g_camera.OrbitComputeMatricesFromInputs(window, init_x, init_y);
+        // if(FPSMode)
+        //     g_camera.FPSComputeMatricesFromInputs(window, init_x, init_y);
+        // else
+        //     g_camera.OrbitComputeMatricesFromInputs(window, init_x, init_y);
+        g_camera.computeCameraMatrices();
         // Compute the projection matrix.
         glm::mat4 projection_matrix = g_camera.get_projection_matrix();
 
