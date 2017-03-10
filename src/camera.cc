@@ -285,6 +285,12 @@ void Camera::computeCameraMatrices() {
     double currentTime = glfwGetTime();
     float deltaTime = float(currentTime - lastTime);
 
+    eye = glm::vec3(0, 0, camera_distance_);
+
+    // std::cout << "eye = " << glm::to_string(eye) << std::endl;
+    // std::cout << "look = " << glm::to_string(look) << std::endl;
+    // std::cout << "center = " << glm::to_string(center) << std::endl;
+
     ProjectionMatrix = glm::perspective(initialFoV, 4.0f / 3.0f, 0.1f, 100.0f);
     // Camera matrix
     ViewMatrix = computeLookAt(

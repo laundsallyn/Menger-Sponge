@@ -11,14 +11,8 @@ private:
     glm::mat4 ViewMatrix;
     glm::mat4 ProjectionMatrix;
     // Initial position : on +Z
-    float camera_distance_ = 5.0;
     float deltaTime;
     glm::vec3 position ;
-
-    glm::vec3 eye;
-    glm::vec3 look;
-    glm::vec3 right_vec;
-    glm::vec3 center;
 
     // Initial horizontal angle : toward -Z
     float horizontalAngle = 3.14f / 4;
@@ -27,7 +21,7 @@ private:
     // Initial Field of View
     float initialFoV = 45.0f;
     glm::vec3 objectCenter = glm::vec3(0.0, 0.0, 0.0);
-    glm::vec3 up;
+    //glm::vec3 up;
     float roll = 0;
     float speed = 10.0f; // 3 units / second
     float mouseSpeed = 0.002f;
@@ -35,9 +29,17 @@ private:
     float radius = 5.0f;
 
 public:
-    Camera(): eye(0, 0, camera_distance_),
-              look(0, 0, -1),
+    glm::vec3 eye;
+    glm::vec3 look;
+    glm::vec3 right_vec;
+    glm::vec3 center;
+    glm::vec3 up;
+    float camera_distance_ = 5.0;
+    float zoom_speed = 10.0f;
+
+    Camera(): look(0, 0, -1),
               up(0, 1, 0) {
+        eye = glm::vec3(0, 0, camera_distance_);
         right_vec = glm::normalize(glm::cross(up, look));
         center = eye + camera_distance_ * look;
     }

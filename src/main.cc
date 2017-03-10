@@ -171,7 +171,7 @@ KeyCallback(GLFWwindow* window,
 
 int g_current_button;
 bool g_mouse_pressed;
-double init_x, init_y = 0.0;
+int init_x, init_y = 0;
 
 void
 MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y)
@@ -185,6 +185,9 @@ MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y)
         // FIXME: left drag
 	} else if (g_current_button == GLFW_MOUSE_BUTTON_RIGHT) {
 		// FIXME: middle drag
+		int yoffset = init_y - mouse_y; // mouse up -> positive
+		std::cout << "yoffset = " << yoffset << std::endl;
+		g_camera.camera_distance_ = yoffset * g_camera.zoom_speed;
 	} else if (g_current_button == GLFW_MOUSE_BUTTON_MIDDLE) {
 		// FIXME: right drag
 	}
