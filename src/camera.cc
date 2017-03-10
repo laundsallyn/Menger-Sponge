@@ -144,14 +144,17 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
 
         }else if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
             if (init_y - ypos < 0.0){
-                radius -= deltaTime * speed;
+                radius += deltaTime * speed;
                 position.z += deltaTime * speed;
             }else if (init_y - ypos > 0.0){
-                radius += deltaTime * speed;
+                radius -= deltaTime * speed;
                 position.z -= deltaTime * speed;
             }
             init_x = xpos;
             init_y = ypos;
+            if (radius < 0.001) {
+                radius = 0.001;
+            }
         }
         // Strafe right
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
