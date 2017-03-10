@@ -98,11 +98,13 @@ in vec4 normal;
 in vec4 light_direction;
 in vec4 world_position;
 out vec4 fragment_color;
+
 void main()
 {
+    fragment_color = vec4(1.f,1.f,1.f,0.f);
 
-    fragment_color = vec4(1.0, 1.0, 1.0, 1.0);
 }
+
 )zzz";
 
 // FIXME: Save geometry to OBJ file

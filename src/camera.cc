@@ -161,10 +161,7 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
             horizontalAngle -= deltaTime * speed;
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-            verticalAngle += mouseSpeed *10;
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            verticalAngle -= mouseSpeed *10;
+
 
         // Direction : Spherical coordinates to Cartesian coordinates conversion
         glm::vec3 direction(
@@ -180,8 +177,13 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
             cos(horizontalAngle - 3.14f / 2.0f)
             );
 
+//        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+//            right = glm::rotateX(right, mouseSpeed*1000);
+//        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+//            right = glm::rotateX(right, -mouseSpeed*1000);
         // Up vector
-//        glm::vec3 up = glm::cross(right, direction);
+
+        up = glm::cross(right, direction);
 
         // Move forward
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
@@ -201,10 +203,10 @@ void Camera::OrbitComputeMatricesFromInputs(GLFWwindow *window, double &init_x, 
             objectCenter -= up * deltaTime * speed;
 
 
-        glm::vec3 objectOffset(radius * cos(horizontalAngle)*sin(verticalAngle),
-                               radius * cos(verticalAngle),
-                               radius * sin(verticalAngle)* sin(horizontalAngle));
-        position = objectCenter + objectOffset;
+//        glm::vec3 cameraP(radius * cos(horizontalAngle)*sin(verticalAngle),
+//                               radius * cos(verticalAngle),
+//                               radius * sin(verticalAngle)* sin(horizontalAngle));
+        position = objectCenter + radius*direction;
 
         float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
         cout << glm::to_string(objectCenter) <<endl;
